@@ -1,10 +1,10 @@
 package com.naim.timer.screens.loginandreg
 
 import androidx.compose.foundation.Image
+import androidx.compose.foundation.background
 import androidx.compose.foundation.focusable
-import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.Text
 import androidx.compose.material.TextField
@@ -12,7 +12,15 @@ import androidx.compose.material.TextFieldDefaults
 import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.scale
+import androidx.compose.ui.focus.FocusRequester
+import androidx.compose.ui.focus.focusOrder
+import androidx.compose.ui.focus.focusRequester
+import androidx.compose.ui.geometry.Offset
+import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.layout.layout
+import androidx.compose.ui.platform.LocalConfiguration
+import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardCapitalization
@@ -35,8 +43,7 @@ fun PasswordField(onChange: (String) -> Unit) {
             label = { Text("Contraseña", color = Color.White) },
             visualTransformation = PasswordVisualTransformation(),
             modifier = Modifier
-                .padding(10.dp)
-                .focusable(),
+                .padding(10.dp),
             keyboardOptions = KeyboardOptions(
                 imeAction = ImeAction.Done,
                 keyboardType = KeyboardType.Password,
@@ -54,19 +61,23 @@ fun PasswordField(onChange: (String) -> Unit) {
 
             )
     }
-
 }
 
 @Composable
 fun Background() {
-    Image(
-        painter = painterResource(id = R.drawable.background),
-        contentDescription = "background",
+    val boxSize = with(LocalDensity.current) { 300.dp.toPx() }
+    Box(
         modifier = Modifier
             .fillMaxSize()
-            .scale(1.5f),
-    )
+                    .background(
+                brush = Brush.linearGradient(
+                    colors = listOf(Color(0xFFF1DDE6), Color(0xFFAFD7B5), Color(0xFFF6B4CF),Color(0xFFE9D4C6),Color(0xFFFAF5F9)),
+                     ),
+                )
+            ){
+    }
 }
+
 @Composable
 fun EmailField(onChange: (String) -> Unit) {
     var email by remember { mutableStateOf("") }

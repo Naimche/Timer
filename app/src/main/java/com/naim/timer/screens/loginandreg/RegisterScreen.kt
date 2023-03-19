@@ -1,12 +1,16 @@
 package com.naim.timer.screens.loginandreg
 
 import android.annotation.SuppressLint
+import androidx.compose.foundation.ExperimentalFoundationApi
+import androidx.compose.foundation.focusGroup
+import androidx.compose.foundation.focusable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.Color.Companion.White
 import androidx.compose.ui.text.font.FontWeight
@@ -19,7 +23,9 @@ import androidx.navigation.compose.rememberNavController
 @SuppressLint("UnusedMaterialScaffoldPaddingParameter")
 @Composable
 fun RegisterScreen(navController: NavController) {
-    Scaffold {
+    Scaffold(modifier = Modifier
+        .fillMaxSize()
+        .navigationBarsPadding()) {
         BodyContent()
     }
 }
@@ -34,8 +40,10 @@ fun BodyContent() {
     var passwordsMatch by remember { mutableStateOf(false) }
     var emailMatch by remember { mutableStateOf(false) }
 
+
     Surface(
-        modifier = Modifier.fillMaxSize(),
+        modifier = Modifier
+            .fillMaxSize(),
         color = Color(0xFF00cecb)
     ) {
         Background()
@@ -51,7 +59,7 @@ fun BodyContent() {
             Spacer(modifier = Modifier.height(60.dp))
             EmailField(onChange = { email = it })
             Spacer(Modifier.height(6.dp))
-            PasswordField(onChange = { password1 = it })
+            PasswordField { password1 = it }
             Spacer(modifier = Modifier.height(6.dp))
             PasswordField { password2 = it }
             Spacer(modifier = Modifier.height(6.dp))
@@ -73,6 +81,7 @@ fun PreviewRegister() {
     BodyContent(navController = navController)
 }
 
+@OptIn(ExperimentalFoundationApi::class)
 @Composable
 fun ButtonConfirmation(enabledPassword: Boolean, enabledEmail: Boolean) {
     val dialogShownState = remember { mutableStateOf(false) }
@@ -96,6 +105,8 @@ fun ButtonConfirmation(enabledPassword: Boolean, enabledEmail: Boolean) {
         },
         colors = ButtonDefaults.buttonColors(backgroundColor = color),
         elevation = elevation,
+        modifier = Modifier
+            .focusGroup()
 
         ) {
         Text(text = "¡Registrarme!", color = White)
