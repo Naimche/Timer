@@ -1,5 +1,6 @@
 package com.naim.timer
 
+import android.app.PendingIntent
 import android.content.pm.ActivityInfo
 import android.media.MediaPlayer
 import android.os.Bundle

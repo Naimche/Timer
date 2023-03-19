@@ -1,29 +1,44 @@
 package com.naim.timer.music
-import android.content.Context
-import android.media.MediaPlayer
-import androidx.lifecycle.SavedStateHandle
+
 import androidx.lifecycle.ViewModel
-import com.naim.timer.R
+import androidx.lifecycle.viewModelScope
+import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.launch
 import javax.inject.Inject
 
-class MusicViewModel @Inject constructor(
-    private val context: Context,
-    savedStateHandle: SavedStateHandle
-) : ViewModel() {
-    private val mediaPlayer = MediaPlayer.create(context, R.raw.background_music)
+
+@HiltViewModel
+class MusicViewModel @Inject constructor() : ViewModel() {
+
+    private val _isMusicOn = MutableStateFlow(true)
+    val isMusicOn = _isMusicOn.asStateFlow()
+
+    fun toggleMusic() {
+        _isMusicOn.value = !_isMusicOn.value
+    }
 
     fun startMusic() {
-        mediaPlayer.start()
+        // Aquí se inicia la música
     }
 
     fun stopMusic() {
-        mediaPlayer.pause()
-        mediaPlayer.seekTo(0) // Resetea el MediaPlayer al inicio del archivo de música
+        // Aquí se detiene la música
+    }
+
+    init {
+        viewModelScope.launch {
+            if (isMusicOn.value) {
+                startMusic()
+            }
+        }
     }
 
     override fun onCleared() {
         super.onCleared()
-        mediaPlayer.release() // Libera el MediaPlayer cuando el ViewModel se borra
+        viewModelScope.launch {
+            stopMusic()
+        }
     }
-
 }

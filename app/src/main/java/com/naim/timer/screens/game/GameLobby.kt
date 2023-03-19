@@ -18,6 +18,8 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.asComposeRenderEffect
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
 import com.naim.timer.screens.loginandreg.*
@@ -29,7 +31,7 @@ fun GameLobby(navController: NavController) {
 }
 
 @Composable
-fun BodyContent(navController: NavController) {
+fun BodyContent(navController: NavController ) {
     val isMenuExtended = remember { mutableStateOf(false) }
 
     val fabAnimationProgress by animateFloatAsState(
@@ -71,8 +73,12 @@ fun BodyContent(
     renderEffect: androidx.compose.ui.graphics.RenderEffect?,
     fabAnimationProgress: Float = 0f,
     clickAnimationProgress: Float = 0f,
-    toggleAnimation: () -> Unit = { }
+    toggleAnimation: () -> Unit = { },
+
 ) {
+    //range inicio music
+
+    //endRange
     Surface(modifier = Modifier.fillMaxSize()) {
 
         Background()
@@ -81,6 +87,7 @@ fun BodyContent(
             verticalArrangement = Arrangement.SpaceAround
         ) {
             Logo()
+
         }
 
         Box(

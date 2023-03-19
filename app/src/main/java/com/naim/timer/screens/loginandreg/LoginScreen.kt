@@ -162,7 +162,7 @@ fun ButtonRegister(navController: NavController) {
 @Composable
 fun ButtonLogin(navController: NavController) {
     Button(
-        onClick = { TODO() },
+        onClick = {  },
         colors = ButtonDefaults.buttonColors(backgroundColor = Color(0xFFd88870))
     ) {
         Text(text = "Iniciar Sesión", color = White)
