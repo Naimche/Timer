@@ -28,6 +28,7 @@ fun RegisterScreen(navController: NavController) {
         .navigationBarsPadding()) {
         BodyContent()
     }
+
 }
 
 @Composable

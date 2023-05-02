@@ -12,34 +12,39 @@ import androidx.compose.material.Surface
 import androidx.compose.material.Text
 import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.rotate
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.lifecycle.Lifecycle
+import androidx.lifecycle.LifecycleObserver
+import androidx.lifecycle.OnLifecycleEvent
 import com.naim.timer.navigation.AppNavigation
 import com.naim.timer.navigation.AppScreens
 import com.naim.timer.ui.theme.TimerTheme
+import dagger.hilt.android.AndroidEntryPoint
+import dagger.hilt.android.HiltAndroidApp
 
+@AndroidEntryPoint
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContent {
-            TimerTheme {
-                // A surface container using the 'background' color from the theme
-                Surface(
-                    modifier = Modifier.fillMaxSize(),
-                    color = MaterialTheme.colors.background
-                ) {
-                    
-                    AppNavigation()
-                }
-            }
+            requestedOrientation = ActivityInfo.SCREEN_ORIENTATION_PORTRAIT
+            StartApp()
         }
     }
 }
 
 
-@Preview(showBackground = true)
 @Composable
-fun DefaultPreview() {
+fun StartApp() {
     TimerTheme {
-        AppNavigation()
+        Surface(
+            modifier = Modifier.fillMaxSize(),
+            color = MaterialTheme.colors.background
+
+        ) {
+            AppNavigation()
+        }
     }
+
 }

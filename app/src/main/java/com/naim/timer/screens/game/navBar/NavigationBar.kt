@@ -60,7 +60,10 @@ fun AnimatedFab(
 fun FabGroup(
     animationProgress: Float = 0f,
     renderEffect: androidx.compose.ui.graphics.RenderEffect? = null,
-    toggleAnimation: () -> Unit = { }
+    toggleAnimation: () -> Unit = { },
+    onClick1: () -> Unit,
+    onClick2: () -> Unit,
+    onClick3: () -> Unit
 ) {
     Box(
         Modifier
@@ -79,7 +82,8 @@ fun FabGroup(
                         end = 210.dp
                     ) * FastOutSlowInEasing.transform(0f, 0.8f, animationProgress)
                 ),
-            opacity = LinearEasing.transform(0.2f, 0.7f, animationProgress)
+            opacity = LinearEasing.transform(0.2f, 0.7f, animationProgress),
+            onClick = onClick3
         )
 
         AnimatedFab(
@@ -89,7 +93,8 @@ fun FabGroup(
                     bottom = 88.dp,
                 ) * FastOutSlowInEasing.transform(0.1f, 0.9f, animationProgress)
             ),
-            opacity = LinearEasing.transform(0.3f, 0.8f, animationProgress)
+            opacity = LinearEasing.transform(0.3f, 0.8f, animationProgress),
+            onClick = onClick1
         )
 
         AnimatedFab(
@@ -100,7 +105,8 @@ fun FabGroup(
                     start = 210.dp
                 ) * FastOutSlowInEasing.transform(0.2f, 1.0f, animationProgress)
             ),
-            opacity = LinearEasing.transform(0.4f, 0.9f, animationProgress)
+            opacity = LinearEasing.transform(0.4f, 0.9f, animationProgress),
+            onClick = onClick2
         )
 
         AnimatedFab(

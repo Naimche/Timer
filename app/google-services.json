@@ -1,0 +1,47 @@
+{
+  "project_info": {
+    "project_number": "763980025278",
+    "project_id": "timer-c64f1",
+    "storage_bucket": "timer-c64f1.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:763980025278:android:726b774c88e471d1d9bdef",
+        "android_client_info": {
+          "package_name": "com.naim.timer"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "763980025278-tmtv06h3v80jipae0ro3urebpbi0r606.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.naim.timer",
+            "certificate_hash": "61219b468bbb08fa0faac23158c194eb735baadd"
+          }
+        },
+        {
+          "client_id": "763980025278-v7kir2d3i323rp5rqs3dthtge9g194dh.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBxlTjgUlEvj1kyEKlrBrmfSf860iDshmc"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "763980025278-v7kir2d3i323rp5rqs3dthtge9g194dh.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

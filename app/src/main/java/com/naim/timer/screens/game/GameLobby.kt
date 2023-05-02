@@ -8,21 +8,23 @@ import androidx.compose.animation.core.tween
 import androidx.compose.foundation.layout.*
 import androidx.compose.material.*
 import androidx.compose.material.icons.filled.*
-import androidx.compose.runtime.Composable
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
+import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.asComposeRenderEffect
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
-import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
+import com.naim.timer.music.MusicViewModel
 import com.naim.timer.screens.loginandreg.*
+import com.naim.timer.utils.MusicSettingsData
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
 
 @SuppressLint("UnusedMaterialScaffoldPaddingParameter")
 @Composable
@@ -31,7 +33,7 @@ fun GameLobby(navController: NavController) {
 }
 
 @Composable
-fun BodyContent(navController: NavController ) {
+fun BodyContent(navController: NavController, musicViewModel: MusicViewModel = hiltViewModel()) {
     val isMenuExtended = remember { mutableStateOf(false) }
 
     val fabAnimationProgress by animateFloatAsState(
@@ -70,15 +72,28 @@ fun BodyContent(navController: NavController ) {
 @Composable
 fun BodyContent(
     navController: NavController,
+    musicViewModel: MusicViewModel = hiltViewModel(),
     renderEffect: androidx.compose.ui.graphics.RenderEffect?,
     fabAnimationProgress: Float = 0f,
     clickAnimationProgress: Float = 0f,
     toggleAnimation: () -> Unit = { },
 
-) {
-    //range inicio music
+    ) {
+    val context = LocalContext.current
 
-    //endRange
+    val musicState = remember {
+        mutableStateOf(false)
+    }
+    val musicStore = MusicSettingsData(context)
+    val musicStateObtained = musicStore.accessMusic.collectAsState(initial = false)
+
+    println(musicStateObtained.value)
+
+    if (musicStateObtained.value == "true") {
+        musicViewModel.playMusic(context)
+    }
+
+
     Surface(modifier = Modifier.fillMaxSize()) {
 
         Background()
@@ -87,7 +102,12 @@ fun BodyContent(
             verticalArrangement = Arrangement.SpaceAround
         ) {
             Logo()
-
+            Button(onClick = {
+                musicState.value = false
+                CoroutineScope(Dispatchers.IO).launch { musicStore.saveMusicSetting(musicState.value) }
+            }) {
+                Text(text = "Play")
+            }
         }
 
         Box(
@@ -103,11 +123,12 @@ fun BodyContent(
                 animationProgress = 0.5f
             )
 
-            FabGroup(renderEffect = renderEffect, animationProgress = fabAnimationProgress)
+            FabGroup(renderEffect = renderEffect, animationProgress = fabAnimationProgress, onClick1 = { println(1)}, onClick2 = { println(2)}, onClick3 = {})
             FabGroup(
                 renderEffect = null,
                 animationProgress = fabAnimationProgress,
-                toggleAnimation = toggleAnimation
+                toggleAnimation = toggleAnimation,
+                onClick1 = { println(1)}, onClick2 = {}, onClick3 = {}
             )
             Circle(
                 color = Color.White,
@@ -137,10 +158,6 @@ fun ButtonGameLobby(navController: NavController, function: () -> Unit, text: St
     }
 }
 
-@Composable
-fun BottomNavigationBar() {
-
-}
 
 
 

@@ -106,7 +106,13 @@ fun BodyContent(navController: NavController) {
             Spacer(Modifier.height(6.dp))
             PasswordField(onChange = { password1 })
             Spacer(modifier = Modifier.height(6.dp))
-            ButtonLogin(navController)
+            ButtonLogin(onClick = {
+                navController.navigate("Game_Lobby"){
+                    popUpTo("Login_Screen"){
+                        inclusive = true
+                    }
+                }
+            })
 
         }
 
@@ -160,9 +166,9 @@ fun ButtonRegister(navController: NavController) {
 
 
 @Composable
-fun ButtonLogin(navController: NavController) {
+fun ButtonLogin(onClick:() -> Unit) {
     Button(
-        onClick = {  },
+        onClick = onClick,
         colors = ButtonDefaults.buttonColors(backgroundColor = Color(0xFFd88870))
     ) {
         Text(text = "Iniciar Sesión", color = White)
