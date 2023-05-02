@@ -29,15 +29,15 @@ import kotlinx.coroutines.launch
 @SuppressLint("UnusedMaterialScaffoldPaddingParameter")
 @Composable
 fun GameLobby(navController: NavController) {
-    BodyContent(navController)
+    GameLobbyBodyContent(navController)
 }
 
 @Composable
-fun BodyContent(navController: NavController, musicViewModel: MusicViewModel = hiltViewModel()) {
-    val isMenuExtended = remember { mutableStateOf(false) }
+fun GameLobbyBodyContent(navController: NavController, musicViewModel: MusicViewModel = hiltViewModel(), viewModel: GameLobbyViewModel = hiltViewModel()) {
+
 
     val fabAnimationProgress by animateFloatAsState(
-        targetValue = if (isMenuExtended.value) 1f else 0f,
+        targetValue = if (viewModel.isMenuExtended) 1f else 0f,
         animationSpec = tween(
             durationMillis = 1000,
             easing = LinearEasing
@@ -45,7 +45,7 @@ fun BodyContent(navController: NavController, musicViewModel: MusicViewModel = h
     )
 
     val clickAnimationProgress by animateFloatAsState(
-        targetValue = if (isMenuExtended.value) 1f else 0f,
+        targetValue = if (viewModel.isMenuExtended) 1f else 0f,
         animationSpec = tween(
             durationMillis = 400,
             easing = LinearEasing
@@ -64,7 +64,7 @@ fun BodyContent(navController: NavController, musicViewModel: MusicViewModel = h
         fabAnimationProgress = fabAnimationProgress,
         clickAnimationProgress = clickAnimationProgress
     ) {
-        isMenuExtended.value = isMenuExtended.value.not()
+        viewModel.isMenuExtended = viewModel.isMenuExtended.not()
     }
 
 }

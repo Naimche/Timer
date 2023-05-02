@@ -22,6 +22,10 @@ fun AppNavigation(){
             GameLobby(navController)
         }
 
+        composable(AppScreens.GameSettings.route){
+            GameLobby(navController)
+        }
+
     }
 }
 

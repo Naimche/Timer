@@ -1,6 +1,7 @@
 package com.naim.timer.screens.loginandreg
 
 import android.annotation.SuppressLint
+import android.util.Log
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.focusGroup
 import androidx.compose.foundation.focusable
@@ -16,23 +17,34 @@ import androidx.compose.ui.graphics.Color.Companion.White
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
+import com.naim.timer.navigation.AppScreens
 
 
 @SuppressLint("UnusedMaterialScaffoldPaddingParameter")
 @Composable
-fun RegisterScreen(navController: NavController) {
-    Scaffold(modifier = Modifier
-        .fillMaxSize()
-        .navigationBarsPadding()) {
-        BodyContent()
+fun RegisterScreen(
+    navController: NavController,
+    viewModel: RegisterScreenViewModel = hiltViewModel()
+) {
+    Scaffold(
+        modifier = Modifier
+            .fillMaxSize()
+            .navigationBarsPadding()
+    ) {
+        RegisterBodyContent(navController = navController)
     }
 
 }
 
 @Composable
-fun BodyContent() {
+fun RegisterBodyContent(
+    navController: NavController,
+    viewModel: RegisterScreenViewModel = hiltViewModel()
+) {
     var infoDialogVisible by remember { mutableStateOf(false) }
 
     var password1 by remember { mutableStateOf("") }
@@ -58,15 +70,25 @@ fun BodyContent() {
 
             Logo()
             Spacer(modifier = Modifier.height(60.dp))
-            EmailField(onChange = { email = it })
+            EmailField(onChange = { viewModel.email = it })
             Spacer(Modifier.height(6.dp))
-            PasswordField { password1 = it }
+            PasswordField { viewModel.password = it }
             Spacer(modifier = Modifier.height(6.dp))
-            PasswordField { password2 = it }
+            PasswordField { viewModel.password2 = it }
             Spacer(modifier = Modifier.height(6.dp))
-            passwordsMatch = password1 == password2 && password1.length > 8
-            emailMatch = email.contains("@") && email.contains(".")
-            ButtonConfirmation(enabledPassword = passwordsMatch, enabledEmail = emailMatch)
+            passwordsMatch =
+                viewModel.password == viewModel.password2 && viewModel.password.length > 8
+            emailMatch = viewModel.email.contains("@") && viewModel.email.contains(".")
+            ButtonConfirmation(
+                enabledPassword = passwordsMatch,
+                enabledEmail = emailMatch,
+                functionClick = { viewModel.register{
+                    if (it == 0) {
+                        Log.i("Register", "Register Success")
+                        navController.navigate(AppScreens.GameLobby.route)
+                        navController.popBackStack()
+                    }
+                } })
 
 
         }
@@ -75,16 +97,10 @@ fun BodyContent() {
 
 }
 
-@Preview(showBackground = true)
-@Composable
-fun PreviewRegister() {
-    val navController = rememberNavController()
-    BodyContent(navController = navController)
-}
 
 @OptIn(ExperimentalFoundationApi::class)
 @Composable
-fun ButtonConfirmation(enabledPassword: Boolean, enabledEmail: Boolean) {
+fun ButtonConfirmation(enabledPassword: Boolean, enabledEmail: Boolean, functionClick: () -> Unit) {
     val dialogShownState = remember { mutableStateOf(false) }
     val color = if (enabledPassword && enabledEmail) Color(0xFFd88870) else Color.Gray.copy(0.1f)
     val elevation = if (!enabledPassword) ButtonDefaults.elevation(
@@ -97,7 +113,7 @@ fun ButtonConfirmation(enabledPassword: Boolean, enabledEmail: Boolean) {
     Button(
         onClick = {
             if (enabledEmail && enabledPassword) {
-                TODO()
+                functionClick()
             } else if (!enabledEmail) {
                 dialogShownState.value = true
             } else if (!enabledPassword) {
@@ -109,52 +125,24 @@ fun ButtonConfirmation(enabledPassword: Boolean, enabledEmail: Boolean) {
         modifier = Modifier
             .focusGroup()
 
-        ) {
+    ) {
         Text(text = "¡Registrarme!", color = White)
 
         if (!enabledEmail && dialogShownState.value) {
             MismatchDialog(
                 onDismiss = { dialogShownState.value = false },
-                text = "El email no es válido"
+                text = "El email no es válido",
+                true
             )
         } else if (dialogShownState.value && !enabledPassword) {
             MismatchDialog(
                 onDismiss = { dialogShownState.value = false },
-                text = "Las contraseñas no coinciden o no tienen 8 caracteres"
+                text = "Las contraseñas no coinciden o no tienen 8 caracteres",
+                true
             )
         }
     }
 
 }
 
-@Composable
-fun MismatchDialog(onDismiss: () -> Unit, text: String) {
-    AlertDialog(
-        onDismissRequest = onDismiss,
-        modifier = Modifier.width(280.dp),
-        title = {
-            Text(
-                text = "Error",
-                style = MaterialTheme.typography.h6,
-                fontWeight = FontWeight.Bold,
-            )
-        },
-        text = {
-            Text(
-                text = text,
-                style = MaterialTheme.typography.body2,
-            )
-        },
-        confirmButton = {
-            TextButton(onClick = onDismiss) {
-                Text(
-                    text = "OK",
-                    color = Color(0xFFd88870),
-                    style = MaterialTheme.typography.button
-                )
-            }
-        },
-        shape = RoundedCornerShape(8.dp),
-        backgroundColor = MaterialTheme.colors.surface
-    )
-}
+

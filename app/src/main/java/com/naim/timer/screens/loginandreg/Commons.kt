@@ -4,11 +4,10 @@ import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.focusable
 import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
-import androidx.compose.material.Text
-import androidx.compose.material.TextField
-import androidx.compose.material.TextFieldDefaults
+import androidx.compose.material.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.scale
@@ -22,6 +21,7 @@ import androidx.compose.ui.layout.layout
 import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardCapitalization
 import androidx.compose.ui.text.input.KeyboardType
@@ -69,12 +69,18 @@ fun Background() {
     Box(
         modifier = Modifier
             .fillMaxSize()
-                    .background(
+            .background(
                 brush = Brush.linearGradient(
-                    colors = listOf(Color(0xFFF1DDE6), Color(0xFFAFD7B5), Color(0xFFF6B4CF),Color(0xFFE9D4C6),Color(0xFFFAF5F9)),
-                     ),
-                )
-            ){
+                    colors = listOf(
+                        Color(0xFFF1DDE6),
+                        Color(0xFFAFD7B5),
+                        Color(0xFFF6B4CF),
+                        Color(0xFFE9D4C6),
+                        Color(0xFFFAF5F9)
+                    ),
+                ),
+            )
+    ) {
     }
 }
 
@@ -104,4 +110,38 @@ fun EmailField(onChange: (String) -> Unit) {
             textColor = Color.White
         ), modifier = Modifier.focusable()
     )
+}
+
+@Composable
+fun MismatchDialog(onDismiss: () -> Unit, text: String, show: Boolean) {
+    if (show) {
+        AlertDialog(
+            onDismissRequest = onDismiss,
+            modifier = Modifier.width(280.dp),
+            title = {
+                Text(
+                    text = "Error",
+                    style = MaterialTheme.typography.h6,
+                    fontWeight = FontWeight.Bold,
+                )
+            },
+            text = {
+                Text(
+                    text = text,
+                    style = MaterialTheme.typography.body2,
+                )
+            },
+            confirmButton = {
+                TextButton(onClick = onDismiss) {
+                    Text(
+                        text = "OK",
+                        color = Color(0xFFd88870),
+                        style = MaterialTheme.typography.button
+                    )
+                }
+            },
+            shape = RoundedCornerShape(8.dp),
+            backgroundColor = MaterialTheme.colors.surface
+        )
+    }
 }

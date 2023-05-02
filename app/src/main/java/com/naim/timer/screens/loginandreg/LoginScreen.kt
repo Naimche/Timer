@@ -24,6 +24,7 @@ import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import android.graphics.RenderEffect
 import android.graphics.Shader
+import android.util.Log
 import androidx.compose.animation.core.FastOutSlowInEasing
 import androidx.compose.animation.core.LinearEasing
 import androidx.compose.animation.core.animateFloatAsState
@@ -62,11 +63,13 @@ import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
+import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.compose.rememberNavController
 
 import kotlin.math.PI
 import kotlin.math.sin
 import com.naim.timer.R
+import com.naim.timer.navigation.AppScreens
 import com.naim.timer.ui.theme.DEFAULT_PADDING
 import com.naim.timer.utils.times
 import com.naim.timer.utils.transform
@@ -74,19 +77,15 @@ import com.naim.timer.utils.transform
 
 @SuppressLint("UnusedMaterialScaffoldPaddingParameter")
 @Composable
-fun FirstScreen(navController: NavController) {
+fun FirstScreen(navController: NavController, viewModel: LoginScreenViewModel = hiltViewModel()) {
     Scaffold() {
-        BodyContent(navController)
+        LoginBodyContent(navController)
     }
 }
 
 @SuppressLint("RememberReturnType")
 @Composable
-fun BodyContent(navController: NavController) {
-    var password1 by remember { mutableStateOf("") }
-    var email by remember { mutableStateOf("") }
-    val focusRequester = remember { FocusRequester() }
-
+fun LoginBodyContent(navController: NavController, viewModel: LoginScreenViewModel = hiltViewModel()) {
     Surface(
         modifier = Modifier.fillMaxSize(),
         color = Color(0xFF00cecb)
@@ -102,17 +101,30 @@ fun BodyContent(navController: NavController) {
 
             Logo()
             Spacer(modifier = Modifier.height(60.dp))
-            EmailField(onChange = { email = it })
+            EmailField(onChange = { viewModel.email = it })
             Spacer(Modifier.height(6.dp))
-            PasswordField(onChange = { password1 })
+            PasswordField(onChange = { viewModel.password = it })
             Spacer(modifier = Modifier.height(6.dp))
             ButtonLogin(onClick = {
-                navController.navigate("Game_Lobby"){
-                    popUpTo("Login_Screen"){
-                        inclusive = true
+                viewModel.login{
+                    Log.i("Login", it.toString())
+                    if (it) {
+                        Log.i("Login", "Login Success")
+                        navController.navigate(AppScreens.GameLobby.route){
+                            navController.popBackStack()
+                        }
+
+                    }else{
+                        Log.i("Login", "Login Failed")
+
                     }
+
                 }
+
+
+
             })
+            MismatchDialog(onDismiss = { viewModel.dialogShowState = false }, text = viewModel.alertError, show = viewModel.dialogShowState)
 
         }
 
@@ -143,8 +155,7 @@ fun ButtonRegister(navController: NavController) {
         Row(
             modifier = Modifier
                 .fillMaxWidth()
-                .padding(horizontal = 24.dp, vertical = 12.dp)
-                ,
+                .padding(horizontal = 24.dp, vertical = 12.dp),
             horizontalArrangement = Arrangement.Center,
             verticalAlignment = Alignment.CenterVertically
         ) {
@@ -166,7 +177,7 @@ fun ButtonRegister(navController: NavController) {
 
 
 @Composable
-fun ButtonLogin(onClick:() -> Unit) {
+fun ButtonLogin(onClick: () -> Unit) {
     Button(
         onClick = onClick,
         colors = ButtonDefaults.buttonColors(backgroundColor = Color(0xFFd88870))
@@ -176,17 +187,6 @@ fun ButtonLogin(onClick:() -> Unit) {
 }
 
 
-
-
-
-
-
-@Preview(showBackground = true)
-@Composable
-fun Preview() {
-    val navController = rememberNavController()
-    BodyContent(navController = navController)
-}
 
 
 
