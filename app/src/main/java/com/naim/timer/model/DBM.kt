@@ -3,10 +3,12 @@ package com.naim.timer.model
 import android.util.Log
 import com.google.firebase.FirebaseApp
 import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.ktx.Firebase
 import java.util.concurrent.Flow
 
 class DBM {
+
     companion object {
         fun onLogin(email: String, password: String, callback: (Int) -> Unit) {
             try {
@@ -45,6 +47,25 @@ class DBM {
                     callback(1)
                 }
             } catch (e: Exception) {
+                callback(1)
+            }
+        }
+
+
+        fun uploadWordsScript(name:String, words:List<String>, callback: (Int) -> Unit){
+            try {
+                val db = FirebaseFirestore.getInstance()
+                val data = DataWords(words)
+                db.collection("DataWords").document(name).set(data)
+                    .addOnSuccessListener {
+                        Log.d("DBM", "DocumentSnapshot added")
+                        callback(0)
+                    }
+                    .addOnFailureListener { e ->
+                        Log.w("DBM", "Error adding document", e)
+                        callback(1)
+                    }
+            }catch (e:Exception){
                 callback(1)
             }
         }

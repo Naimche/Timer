@@ -12,4 +12,5 @@ import javax.inject.Inject
 class GameLobbyViewModel @Inject constructor(savedStateHandle: SavedStateHandle) :
     ViewModel() {
     var isMenuExtended by savedStateHandle.saveable { mutableStateOf(false) }
+    var whIsMenu by savedStateHandle.saveable { mutableStateOf(0) }
 }

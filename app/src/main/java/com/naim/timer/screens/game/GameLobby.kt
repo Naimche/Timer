@@ -6,24 +6,34 @@ import android.util.Log
 import androidx.compose.animation.core.LinearEasing
 import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.animation.core.tween
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.*
 import androidx.compose.material.icons.filled.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.asComposeRenderEffect
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.text.TextStyle
+import androidx.compose.ui.text.font.Font
+import androidx.compose.ui.text.font.FontFamily
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
 import com.naim.timer.music.MusicSettingsData
 import com.naim.timer.music.MusicViewModel
 import com.naim.timer.navigation.AppScreens
 import com.naim.timer.screens.loginandreg.*
+import com.naim.timer.ui.theme.Lobster
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -35,7 +45,11 @@ fun GameLobby(navController: NavController) {
 }
 
 @Composable
-fun GameLobbyBodyContent(navController: NavController, musicViewModel: MusicViewModel = hiltViewModel(), viewModel: GameLobbyViewModel = hiltViewModel()) {
+fun GameLobbyBodyContent(
+    navController: NavController,
+    musicViewModel: MusicViewModel = hiltViewModel(),
+    viewModel: GameLobbyViewModel = hiltViewModel()
+) {
 
 
     val fabAnimationProgress by animateFloatAsState(
@@ -64,15 +78,18 @@ fun GameLobbyBodyContent(navController: NavController, musicViewModel: MusicView
         navController = navController,
         renderEffect = renderEffect,
         fabAnimationProgress = fabAnimationProgress,
-        clickAnimationProgress = clickAnimationProgress
+        clickAnimationProgress = clickAnimationProgress,
     ) {
         viewModel.isMenuExtended = viewModel.isMenuExtended.not()
+
+
     }
 
 }
 
 @Composable
 fun GameLobbyBodyContent(
+    viewModel: GameLobbyViewModel = hiltViewModel(),
     navController: NavController,
     musicViewModel: MusicViewModel = hiltViewModel(),
     renderEffect: androidx.compose.ui.graphics.RenderEffect?,
@@ -80,32 +97,69 @@ fun GameLobbyBodyContent(
     clickAnimationProgress: Float = 0f,
     toggleAnimation: () -> Unit = { },
 
+
     ) {
-    val context = LocalContext.current
-
-
-    val musicStore = MusicSettingsData(context)
-    val musicStateObtained = musicStore.accessMusic.collectAsState(initial = false)
-    Log.i("Music", "MusicStore 1 value is ${musicStateObtained.value}, viewmodel is ${musicViewModel.musicState}")
-    musicViewModel.musicState = musicStateObtained.value == "true"
-    Log.i("Music", "MusicStore 2 value is ${musicStateObtained.value}, viewmodel is ${musicViewModel.musicState}")
-    println(musicStateObtained.value)
-    if (musicStateObtained.value == "true") {
-        musicViewModel.playMusic(context)
-        Log.i("Music", "Music is playing")
-    }
-
-
     Surface(modifier = Modifier.fillMaxSize()) {
 
         Background()
-        Column(
-            horizontalAlignment = Alignment.CenterHorizontally,
-            verticalArrangement = Arrangement.SpaceAround
-        ) {
-            Logo()
+        //region start configurationGame
+        when (viewModel.whIsMenu) {
+
+            0 ->{
+
+                Column(
+                    horizontalAlignment = Alignment.CenterHorizontally,
+                    verticalArrangement = Arrangement.SpaceAround,
+                    modifier = Modifier
+                        .wrapContentHeight().padding(bottom = 70.dp)
+                ) {
+                    Logo()
+                    Spacer(modifier =Modifier.height(16.dp))
+                    Card(
+                        backgroundColor = Color(0xCEFFD7D7).copy(alpha = 0.2f),
+                        elevation = 0.dp,
+                        shape = RoundedCornerShape(8.dp),
+                        modifier = Modifier
+                            .padding(15.dp).padding(horizontal = 25.dp, vertical = 16.dp)
+                            .wrapContentSize(),
+
+                        ) {
+                        Text(
+                            text = "¡Bienvenido a Timer, el juego de mesa Times Up ahora en tu móvil! Adivina palabras y frases antes de que se acabe el tiempo!",
+                            modifier = Modifier.padding(start = 16.dp, end = 10.dp, top = 16.dp, bottom = 16.dp),
+                            style = TextStyle(color = Color.White),
+                            fontSize = 26.sp,
+                            fontFamily = Lobster,
+                            color = Color(0xFFB885FF)
+                        )
+                    }
+                    Button(
+                        onClick = { /* acción al pulsar el botón */ },
+                        modifier = Modifier
+                            .padding(horizontal = 24.dp, vertical = 16.dp)
+                            .clip(RoundedCornerShape(16.dp)),
+                        colors = ButtonDefaults.buttonColors(backgroundColor = Color(0xFFfae079))
+                    ) {
+                        Text(
+                            text = "Jugar ahora",
+                            fontFamily = Lobster,
+                            fontSize = 20.sp,
+                            fontWeight = FontWeight.Bold,
+                            color = Color.White,
+                            modifier = Modifier.padding(4.dp)
+                        )
+                    }
+
+
+                }
+
+
+            }
         }
 
+        //endregion
+
+        //region start Navigation
         Box(
             Modifier
                 .fillMaxSize()
@@ -119,18 +173,31 @@ fun GameLobbyBodyContent(
                 animationProgress = 0.5f
             )
 
-            FabGroup(renderEffect = renderEffect, animationProgress = fabAnimationProgress, onClick1 = { println(1)}, onClick2 = { println(2)}, onClick3 = {})
+            FabGroup(
+                renderEffect = renderEffect,
+                animationProgress = fabAnimationProgress,
+                onClick1 = {  },
+                onClick2 = {  },
+                onClick3 = {})
             FabGroup(
                 renderEffect = null,
                 animationProgress = fabAnimationProgress,
                 toggleAnimation = toggleAnimation,
-                onClick1 = { navController.navigate(AppScreens.GameSettings.route)}, onClick2 = {}, onClick3 = {}
+                onClick1 = { viewModel.whIsMenu = 0  },
+                onClick2 = {viewModel.whIsMenu = 1 },
+                onClick3 = {viewModel.whIsMenu = 2 }
             )
             Circle(
                 color = Color.White,
                 animationProgress = clickAnimationProgress
             )
         }
+
+        //endregion
+
+
+
+
     }
 
 }
