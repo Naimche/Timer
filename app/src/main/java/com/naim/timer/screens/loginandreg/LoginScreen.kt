@@ -108,6 +108,7 @@ fun LoginBodyContent(navController: NavController, viewModel: LoginScreenViewMod
             ButtonLogin(onClick = {
                 viewModel.login{
                     Log.i("Login", it.toString())
+
                     if (it) {
                         Log.i("Login", "Login Success")
                         navController.navigate(AppScreens.GameLobby.route){

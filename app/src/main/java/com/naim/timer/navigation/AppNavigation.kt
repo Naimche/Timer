@@ -5,6 +5,7 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import com.naim.timer.screens.game.GameLobby
+import com.naim.timer.screens.game.settings.GameSettings
 import com.naim.timer.screens.loginandreg.FirstScreen
 import com.naim.timer.screens.loginandreg.RegisterScreen
 
@@ -23,7 +24,7 @@ fun AppNavigation(){
         }
 
         composable(AppScreens.GameSettings.route){
-            GameLobby(navController)
+            GameSettings(navController)
         }
 
     }

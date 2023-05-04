@@ -2,6 +2,7 @@ package com.naim.timer.screens.game
 
 import android.annotation.SuppressLint
 import android.os.Build
+import android.util.Log
 import androidx.compose.animation.core.LinearEasing
 import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.animation.core.tween
@@ -19,9 +20,10 @@ import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
+import com.naim.timer.music.MusicSettingsData
 import com.naim.timer.music.MusicViewModel
+import com.naim.timer.navigation.AppScreens
 import com.naim.timer.screens.loginandreg.*
-import com.naim.timer.utils.MusicSettingsData
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -58,7 +60,7 @@ fun GameLobbyBodyContent(navController: NavController, musicViewModel: MusicView
         null
     }
 
-    BodyContent(
+    GameLobbyBodyContent(
         navController = navController,
         renderEffect = renderEffect,
         fabAnimationProgress = fabAnimationProgress,
@@ -70,7 +72,7 @@ fun GameLobbyBodyContent(navController: NavController, musicViewModel: MusicView
 }
 
 @Composable
-fun BodyContent(
+fun GameLobbyBodyContent(
     navController: NavController,
     musicViewModel: MusicViewModel = hiltViewModel(),
     renderEffect: androidx.compose.ui.graphics.RenderEffect?,
@@ -81,16 +83,16 @@ fun BodyContent(
     ) {
     val context = LocalContext.current
 
-    val musicState = remember {
-        mutableStateOf(false)
-    }
+
     val musicStore = MusicSettingsData(context)
     val musicStateObtained = musicStore.accessMusic.collectAsState(initial = false)
-
+    Log.i("Music", "MusicStore 1 value is ${musicStateObtained.value}, viewmodel is ${musicViewModel.musicState}")
+    musicViewModel.musicState = musicStateObtained.value == "true"
+    Log.i("Music", "MusicStore 2 value is ${musicStateObtained.value}, viewmodel is ${musicViewModel.musicState}")
     println(musicStateObtained.value)
-
     if (musicStateObtained.value == "true") {
         musicViewModel.playMusic(context)
+        Log.i("Music", "Music is playing")
     }
 
 
@@ -102,12 +104,6 @@ fun BodyContent(
             verticalArrangement = Arrangement.SpaceAround
         ) {
             Logo()
-            Button(onClick = {
-                musicState.value = false
-                CoroutineScope(Dispatchers.IO).launch { musicStore.saveMusicSetting(musicState.value) }
-            }) {
-                Text(text = "Play")
-            }
         }
 
         Box(
@@ -128,7 +124,7 @@ fun BodyContent(
                 renderEffect = null,
                 animationProgress = fabAnimationProgress,
                 toggleAnimation = toggleAnimation,
-                onClick1 = { println(1)}, onClick2 = {}, onClick3 = {}
+                onClick1 = { navController.navigate(AppScreens.GameSettings.route)}, onClick2 = {}, onClick3 = {}
             )
             Circle(
                 color = Color.White,
