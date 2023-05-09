@@ -25,6 +25,7 @@ import androidx.navigation.NavController
 import android.graphics.RenderEffect
 import android.graphics.Shader
 import android.util.Log
+import android.widget.Toast
 import androidx.compose.animation.core.FastOutSlowInEasing
 import androidx.compose.animation.core.LinearEasing
 import androidx.compose.animation.core.animateFloatAsState
@@ -61,8 +62,11 @@ import androidx.compose.ui.draw.scale
 import androidx.compose.ui.graphics.asComposeRenderEffect
 import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.layout.onGloballyPositioned
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
+import androidx.compose.ui.window.DialogProperties
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.compose.rememberNavController
 
@@ -106,28 +110,60 @@ fun LoginBodyContent(navController: NavController, viewModel: LoginScreenViewMod
             PasswordField(onChange = { viewModel.password = it })
             Spacer(modifier = Modifier.height(6.dp))
             ButtonLogin(onClick = {
-                viewModel.login{
-                    Log.i("Login", it.toString())
-                    navController.navigate(AppScreens.GameLobby.route)
-                    if (it) {
-                        Log.i("Login", "Login Success")
-                        navController.navigate(AppScreens.GameLobby.route){
-                            navController.popBackStack()
-                        }
+                        viewModel.login{
+                        viewModel.numAttepmts += 1
+                        Log.i("Login", it.toString())
+                         navController.navigate(AppScreens.GameLobby.route)
+                        if (it) {
+                            Log.i("Login", "Login Success")
+                            Toast.makeText(navController.context, "Login Exitoso", Toast.LENGTH_SHORT).show()
+                            navController.navigate(AppScreens.GameLobby.route){
+                                navController.popBackStack()
+                            }
 
-                    }else{
-                        Log.i("Login", "Login Failed")
+                        }else{
+                            Log.i("Login", "Login Failed")
+                            if (viewModel.toast){
+                                Toast.makeText(navController.context, viewModel.alertError, Toast.LENGTH_SHORT).show()
+                                viewModel.toast = false
+                            }
+                        }
 
                     }
 
-                }
+
+
+
 
 
 
             })
+
             MismatchDialog(onDismiss = { viewModel.dialogShowState = false }, text = viewModel.alertError, show = viewModel.dialogShowState)
+            //Loading when more than 5 attemps
+
+            if (viewModel.loading){
+                CircularProgressIndicator(modifier = Modifier.padding(top = 30.dp), color = Color.White)
+
+
+            }
+
 
         }
+        if (viewModel.loading){
+            Box(Modifier.fillMaxSize()) {
+                AlertDialog(
+                    onDismissRequest = { },
+                    properties = DialogProperties(dismissOnBackPress = false, dismissOnClickOutside = false),
+                    backgroundColor = Color.Transparent,
+                    buttons = {},
+                    modifier = Modifier
+                        .fillMaxSize()
+
+                )
+            }
+        }
+
 
     }
     Column(modifier = Modifier.fillMaxSize(), verticalArrangement = Arrangement.Bottom) {

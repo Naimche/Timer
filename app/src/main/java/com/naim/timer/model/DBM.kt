@@ -2,10 +2,21 @@ package com.naim.timer.model
 
 import android.util.Log
 import com.google.firebase.FirebaseApp
+import com.google.firebase.FirebaseNetworkException
+import com.google.firebase.FirebaseTooManyRequestsException
 import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.auth.FirebaseAuthException
+import com.google.firebase.auth.FirebaseAuthInvalidCredentialsException
+import com.google.firebase.auth.FirebaseAuthInvalidUserException
+import com.google.firebase.auth.ktx.auth
 import com.google.firebase.firestore.FirebaseFirestore
+import com.google.firebase.firestore.ktx.toObject
 import com.google.firebase.ktx.Firebase
-import java.util.concurrent.Flow
+import com.google.firebase.storage.ktx.storage
+import kotlinx.coroutines.flow.*
+import kotlinx.coroutines.tasks.await
+import kotlin.coroutines.resume
+import kotlin.coroutines.suspendCoroutine
 
 class DBM {
 
@@ -17,8 +28,29 @@ class DBM {
                         .addOnCompleteListener {
                             if (it.isSuccessful) {
                                 callback(0)
-                            } else {
-                                callback(1)
+
+                            }
+                        }.addOnFailureListener { e ->
+                            Log.i("LOGIN", "onLogin: ${e}")
+                            when (e) {
+                                is FirebaseAuthInvalidCredentialsException -> {
+                                    callback(1)
+                                }
+                                is FirebaseAuthInvalidUserException -> {
+                                    callback(1)
+                                }
+                                is FirebaseTooManyRequestsException -> {
+                                    callback(4)
+                                }
+                                is FirebaseNetworkException -> {
+                                    callback(3)
+                                }
+                                is FirebaseAuthException -> {
+                                    callback(9)
+                                }
+                                else -> {
+                                    callback(9)
+                                }
                             }
                         }
                 } else {
@@ -29,13 +61,18 @@ class DBM {
             }
         }
 
-        fun onRegister(email: String, password: String, callback: (Int) -> Unit) {
+        fun onRegister(email: String, password: String, nick: String, callback: (Int) -> Unit) {
             try {
                 if (email.isNotBlank() && password.isNotBlank()) {
-                    FirebaseAuth.getInstance().createUserWithEmailAndPassword(email, password)
+                    val mAuth = FirebaseAuth.getInstance()
+                    mAuth.createUserWithEmailAndPassword(email, password)
                         .addOnCompleteListener {
+                            val fireStore = FirebaseFirestore.getInstance()
                             if (it.isSuccessful) {
                                 Log.i("DBM", "onRegister: True ")
+                                val userAuth = mAuth.currentUser
+                                val user = User(nick, listOf("Personas", "Deportes"))
+                                fireStore.collection("User").document(userAuth!!.uid).set(user)
                                 callback(0)
                             } else {
                                 Log.i("DBM", "onRegister: False ")
@@ -52,10 +89,10 @@ class DBM {
         }
 
 
-        fun uploadWordsScript(name:String, words:List<String>, callback: (Int) -> Unit){
+        fun uploadWordsScript(name: String, words: List<String>, callback: (Int) -> Unit) {
             try {
                 val db = FirebaseFirestore.getInstance()
-                val data = DataWords(words)
+                val data = DataWords(words, "")
                 db.collection("DataWords").document(name).set(data)
                     .addOnSuccessListener {
                         Log.d("DBM", "DocumentSnapshot added")
@@ -65,9 +102,40 @@ class DBM {
                         Log.w("DBM", "Error adding document", e)
                         callback(1)
                     }
-            }catch (e:Exception){
+            } catch (e: Exception) {
                 callback(1)
             }
+        }
+
+        suspend fun getImagen(idDlc: String) = suspendCoroutine { c ->
+            val img = Firebase.storage.reference.child("Dlcs/$idDlc.png")
+            if (Firebase.auth.uid != null) {
+                img.downloadUrl.addOnSuccessListener {
+                    Log.i("DBM", "getImagen: $it")
+                    c.resume(it.toString())
+                }.addOnFailureListener {
+                    Log.i("DBM", "getImagen: $it")
+                    c.resume("")
+                }
+            }
+        }
+
+        fun getAllDlcs(): Flow<List<DataWords>> = flow {
+            val list = mutableListOf<DataWords>()
+            val db = FirebaseFirestore.getInstance()
+            db.collection("DataWords").get().await().forEach {
+                if (it.id.contains("Dlc")) {
+                    Log.i("DLC", "getAllDlcs: ${it.id}")
+                    Log.i("DLC", "getAllDlcs: $it")
+                    //Log.i("DLC", "getAllDlcs: ${it.toObject(DataWords::class.java)}")
+                    //list.add(it.toObject(DataWords::class.java))
+                    val dataWords = DataWords.fromSnapshot(it)
+                    list.add(dataWords)
+                    Log.i("DLC", "getAllDlcs: $it ${list})}")
+                }
+
+            }
+            emit(list)
         }
 
     }

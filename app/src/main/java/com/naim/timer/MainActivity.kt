@@ -13,10 +13,12 @@ import androidx.compose.material.Text
 import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.rotate
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.LifecycleObserver
 import androidx.lifecycle.OnLifecycleEvent
+import com.naim.timer.model.DBM
 import com.naim.timer.navigation.AppNavigation
 import com.naim.timer.navigation.AppScreens
 import com.naim.timer.ui.theme.TimerTheme
@@ -28,6 +30,7 @@ class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContent {
+
             requestedOrientation = ActivityInfo.SCREEN_ORIENTATION_PORTRAIT
             StartApp()
         }
@@ -47,4 +50,10 @@ fun StartApp() {
         }
     }
 
+    //region start Scriptzone
+    //DBM.uploadWordsScript("Deportes", listOf("fútbol", "tenis", "baloncesto", "voleibol", "natación", "atletismo", "ciclismo", "béisbol", "boxeo", "esgrima", "gimnasia", "halterofilia", "hockey", "judo", "karate", "remo", "taekwondo", "tiro con arco", "triatlón", "yoga")){
+
+    //}
+
+    //endregion
 }

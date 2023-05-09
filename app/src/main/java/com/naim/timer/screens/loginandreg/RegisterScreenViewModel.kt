@@ -17,15 +17,17 @@ class RegisterScreenViewModel @Inject constructor(savedStateHandle: SavedStateHa
 
 
     var email by savedStateHandle.saveable { mutableStateOf("") }
+    var name by savedStateHandle.saveable { mutableStateOf("") }
     var password by savedStateHandle.saveable { mutableStateOf("") }
     var password2 by savedStateHandle.saveable { mutableStateOf("") }
+    var isErrorShow by savedStateHandle.saveable { mutableStateOf(false) }
 
     fun register(callback: (Int) -> Unit) {
         if (password != password2) {
             callback(1)
 
         } else {
-            DBM.onRegister(email, password) {
+            DBM.onRegister(email, password, name) {
                 if (it == 0) {
                     Log.i("RegisterScreenViewModel", "register: ")
                     callback(0)

@@ -2,7 +2,6 @@ package com.naim.timer.screens.game
 
 import android.annotation.SuppressLint
 import android.os.Build
-import android.util.Log
 import androidx.compose.animation.core.LinearEasing
 import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.animation.core.tween
@@ -10,6 +9,7 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.*
+import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
@@ -17,26 +17,22 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.asComposeRenderEffect
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.TextStyle
-import androidx.compose.ui.text.font.Font
-import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
-import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
-import com.naim.timer.music.MusicSettingsData
+import com.google.rpc.Help
 import com.naim.timer.music.MusicViewModel
-import com.naim.timer.navigation.AppScreens
+import com.naim.timer.screens.game.utils.CountdownButton
+import com.naim.timer.screens.game.utils.ExposedDropMenuTimer
+import com.naim.timer.screens.game.utils.HelpButton
+import com.naim.timer.screens.game.utils.ImageCarousel
 import com.naim.timer.screens.loginandreg.*
 import com.naim.timer.ui.theme.Lobster
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.launch
 
 @SuppressLint("UnusedMaterialScaffoldPaddingParameter")
 @Composable
@@ -87,6 +83,7 @@ fun GameLobbyBodyContent(
 
 }
 
+@OptIn(ExperimentalMaterialApi::class)
 @Composable
 fun GameLobbyBodyContent(
     viewModel: GameLobbyViewModel = hiltViewModel(),
@@ -105,28 +102,35 @@ fun GameLobbyBodyContent(
         //region start configurationGame
         when (viewModel.whIsMenu) {
 
-            0 ->{
-
+            0 -> {
+                //region start configurationGame
                 Column(
                     horizontalAlignment = Alignment.CenterHorizontally,
                     verticalArrangement = Arrangement.SpaceAround,
                     modifier = Modifier
-                        .wrapContentHeight().padding(bottom = 70.dp)
+                        .wrapContentHeight()
+                        .padding(bottom = 70.dp)
                 ) {
                     Logo()
-                    Spacer(modifier =Modifier.height(16.dp))
+                    Spacer(modifier = Modifier.height(16.dp))
                     Card(
                         backgroundColor = Color(0xCEFFD7D7).copy(alpha = 0.2f),
                         elevation = 0.dp,
                         shape = RoundedCornerShape(8.dp),
                         modifier = Modifier
-                            .padding(15.dp).padding(horizontal = 25.dp, vertical = 16.dp)
+                            .padding(15.dp)
+                            .padding(horizontal = 25.dp, vertical = 16.dp)
                             .wrapContentSize(),
 
                         ) {
                         Text(
                             text = "¡Bienvenido a Timer, el juego de mesa Times Up ahora en tu móvil! Adivina palabras y frases antes de que se acabe el tiempo!",
-                            modifier = Modifier.padding(start = 16.dp, end = 10.dp, top = 16.dp, bottom = 16.dp),
+                            modifier = Modifier.padding(
+                                start = 16.dp,
+                                end = 10.dp,
+                                top = 16.dp,
+                                bottom = 16.dp
+                            ),
                             style = TextStyle(color = Color.White),
                             fontSize = 26.sp,
                             fontFamily = Lobster,
@@ -153,11 +157,234 @@ fun GameLobbyBodyContent(
 
                 }
 
+                //endregion
+            }
+            1 -> {
 
+                //region start configurationGame
+                Column(modifier = Modifier.fillMaxSize()) {
+
+                    Column(
+                        horizontalAlignment = Alignment.CenterHorizontally,
+                        verticalArrangement = Arrangement.SpaceAround,
+                        modifier = Modifier
+                            .wrapContentHeight()
+                            .padding(bottom = 20.dp, top = 70.dp)
+                    ) {
+                        Logo()
+                        Spacer(modifier = Modifier.height(36.dp))
+                    }
+
+
+                    Column(
+                        horizontalAlignment = Alignment.Start,
+                        modifier = Modifier.padding(start = 16.dp)
+                    ) {
+                        Row() {
+                            Text(
+                                text = "Categoría 1",
+                                modifier = Modifier.padding(
+                                    start = 0.dp,
+                                    end = 10.dp,
+                                    top = 16.dp,
+                                    bottom = 8.dp
+                                ),
+                                style = TextStyle(color = Color.White),
+                                fontSize = 26.sp,
+                                fontFamily = Lobster,
+                                color = Color(0xFFB885FF)
+                            )
+                            Text(
+                                text = "Categoría 2",
+                                modifier = Modifier.padding(
+                                    start = 85.dp,
+                                    end = 10.dp,
+                                    top = 16.dp,
+                                    bottom = 8.dp
+                                ),
+                                style = TextStyle(color = Color.White),
+                                fontSize = 26.sp,
+                                fontFamily = Lobster,
+                                color = Color(0xFFB885FF)
+                            )
+                        }
+
+                        Row {
+
+                            ExposedDropMenuTimer(
+                                expanded = viewModel.expanded,
+                                onExpandedChange = {
+                                    viewModel.expanded = viewModel.expanded.not()
+                                },
+                                onDismissRequest = { viewModel.expanded = false },
+                                selectedCategory = viewModel.selectedCategory,
+                            ) {
+                                viewModel.categories.forEach { categ ->
+                                    DropdownMenuItem(onClick = {
+                                        viewModel.expanded = false
+                                        viewModel.selectedCategory = categ
+                                    }) {
+                                        Text(text = categ)
+                                    }
+                                }
+                            }
+                            Spacer(modifier = Modifier.width(52.dp))
+                            ExposedDropMenuTimer(
+                                expanded = viewModel.expanded2,
+                                onExpandedChange = {
+                                    viewModel.expanded2 = viewModel.expanded2.not()
+                                },
+                                onDismissRequest = { viewModel.expanded2 = false },
+                                selectedCategory = viewModel.selectedCategory2,
+                            ) {
+                                viewModel.categories2.forEach { categ ->
+                                    DropdownMenuItem(onClick = {
+                                        viewModel.expanded2 = false
+                                        viewModel.selectedCategory2 = categ
+                                    }) {
+                                        Text(text = categ)
+                                    }
+                                }
+                            }
+
+
+                        }
+
+
+                        Row {
+                            Text(
+                                text = "Categoría 3",
+                                modifier = Modifier.padding(
+                                    start = 0.dp,
+                                    end = 10.dp,
+                                    top = 16.dp,
+                                    bottom = 8.dp
+                                ),
+                                style = TextStyle(color = Color.White),
+                                fontSize = 26.sp,
+                                fontFamily = Lobster,
+                                color = Color(0xFFB885FF)
+                            )
+
+                            Text(
+                                text = "Timer",
+                                modifier = Modifier.padding(
+                                    start = 85.dp,
+                                    end = 10.dp,
+                                    top = 16.dp,
+                                    bottom = 8.dp
+                                ),
+                                style = TextStyle(color = Color.White),
+                                fontSize = 26.sp,
+                                fontFamily = Lobster,
+                                color = Color(0xFFB885FF)
+                            )
+                        }
+                            Row {
+                                ExposedDropMenuTimer(
+                                    expanded = viewModel.expanded3,
+                                    onExpandedChange = {
+                                        viewModel.expanded3 = viewModel.expanded3.not()
+                                    },
+                                    onDismissRequest = { viewModel.expanded3 = false },
+                                    selectedCategory = viewModel.selectedCategory3,
+                                ) {
+                                    viewModel.categories3.forEach { categ ->
+                                        DropdownMenuItem(onClick = {
+                                            viewModel.expanded3 = false
+                                            viewModel.selectedCategory3 = categ
+                                        }) {
+                                            Text(text = categ)
+                                        }
+                                    }
+                                }
+
+                                Spacer(modifier = Modifier.width(52.dp))
+                                ExposedDropMenuTimer(
+                                    expanded = viewModel.expanded4,
+                                    onExpandedChange = {
+                                        viewModel.expanded4 = viewModel.expanded4.not()
+                                    },
+                                    onDismissRequest = { viewModel.expanded4 = false },
+                                    selectedCategory = viewModel.selectedCategory4,
+                                    leadingIcon = {
+                                        Icon(
+                                            imageVector = Icons.Default.Timer,
+                                            contentDescription = "Timer",
+                                        )
+                                    }
+                                ) {
+                                    viewModel.timer4.forEach { categ ->
+                                        DropdownMenuItem(onClick = {
+                                            viewModel.expanded4 = false
+                                            viewModel.selectedCategory4 = categ
+                                        }) {
+                                            Text(text = categ)
+                                        }
+
+                                    }
+                                }
+
+
+                        }
+
+
+
+
+
+
+
+
+                    }
+
+                }
+
+
+                //endregion
+            }
+            2 -> {
+                //region start shop
+                viewModel.updateDlcList()
+
+                Column(
+                    horizontalAlignment = Alignment.CenterHorizontally,
+                    verticalArrangement = Arrangement.SpaceAround,
+                    modifier = Modifier
+                        .wrapContentHeight()
+                        .padding(bottom = 70.dp)
+                ) {
+                    Logo()
+                    Spacer(modifier = Modifier.height(36.dp))
+                    Row(
+                        modifier = Modifier
+                            .wrapContentHeight()
+                            .background(Color(0xFFfae079))
+                            .fillMaxWidth(),
+                        verticalAlignment = Alignment.CenterVertically,
+                        horizontalArrangement = Arrangement.Center
+                    ) {
+                        Text(
+                            text = "¡Compra categorias!",
+                            fontFamily = Lobster,
+                            fontSize = 40.sp,
+                            fontWeight = FontWeight.Bold,
+                            color = Color.White,
+                            modifier = Modifier.padding(12.dp)
+                        )
+                    }
+
+                    ImageCarousel(dlcs = viewModel.Dlcs)
+
+
+                    Spacer(modifier = Modifier.height(86.dp))
+
+                }
+                //endregion
             }
         }
 
         //endregion
+
 
         //region start Navigation
         Box(
@@ -176,16 +403,16 @@ fun GameLobbyBodyContent(
             FabGroup(
                 renderEffect = renderEffect,
                 animationProgress = fabAnimationProgress,
-                onClick1 = {  },
-                onClick2 = {  },
+                onClick1 = { },
+                onClick2 = { },
                 onClick3 = {})
             FabGroup(
                 renderEffect = null,
                 animationProgress = fabAnimationProgress,
                 toggleAnimation = toggleAnimation,
-                onClick1 = { viewModel.whIsMenu = 0  },
-                onClick2 = {viewModel.whIsMenu = 1 },
-                onClick3 = {viewModel.whIsMenu = 2 }
+                onClick1 = { viewModel.whIsMenu = 0 },
+                onClick2 = { viewModel.whIsMenu = 1 },
+                onClick3 = { viewModel.whIsMenu = 2 }
             )
             Circle(
                 color = Color.White,
@@ -194,8 +421,6 @@ fun GameLobbyBodyContent(
         }
 
         //endregion
-
-
 
 
     }

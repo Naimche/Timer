@@ -43,7 +43,7 @@ fun PasswordField(onChange: (String) -> Unit) {
             label = { Text("Contraseña", color = Color.White) },
             visualTransformation = PasswordVisualTransformation(),
             modifier = Modifier
-                .padding(10.dp),
+                .padding(6.dp),
             keyboardOptions = KeyboardOptions(
                 imeAction = ImeAction.Done,
                 keyboardType = KeyboardType.Password,
@@ -108,7 +108,33 @@ fun EmailField(onChange: (String) -> Unit) {
             disabledIndicatorColor = Color.Transparent,
             cursorColor = Color(0xFF9b5de5),
             textColor = Color.White
-        ), modifier = Modifier.focusable()
+        ), modifier = Modifier.focusable().padding(6.dp)
+    )
+}
+
+@Composable
+fun NameField(onChange: (String) -> Unit) {
+    var name by remember { mutableStateOf("") }
+    TextField(
+        value = name, keyboardOptions = KeyboardOptions(
+            imeAction = ImeAction.Done,
+            keyboardType = KeyboardType.Text,
+            autoCorrect = false,
+            capitalization = KeyboardCapitalization.Words
+        ), onValueChange = {
+            name = it
+            onChange(it)
+        },
+        label = { Text(text = "Nick", color = Color.White) },
+        colors = TextFieldDefaults.textFieldColors(
+            backgroundColor = Color(0xFFe2c0b6),
+
+            focusedIndicatorColor = Color.Transparent,
+            unfocusedIndicatorColor = Color.Transparent,
+            disabledIndicatorColor = Color.Transparent,
+            cursorColor = Color(0xFF9b5de5),
+            textColor = Color.White
+        ), modifier = Modifier.focusable().padding(6.dp)
     )
 }
 

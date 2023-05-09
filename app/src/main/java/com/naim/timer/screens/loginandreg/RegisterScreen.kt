@@ -22,6 +22,7 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
 import com.naim.timer.navigation.AppScreens
+import java.util.jar.Attributes.Name
 
 
 @SuppressLint("UnusedMaterialScaffoldPaddingParameter")
@@ -47,9 +48,6 @@ fun RegisterBodyContent(
 ) {
     var infoDialogVisible by remember { mutableStateOf(false) }
 
-    var password1 by remember { mutableStateOf("") }
-    var password2 by remember { mutableStateOf("") }
-    var email by remember { mutableStateOf("") }
     var passwordsMatch by remember { mutableStateOf(false) }
     var emailMatch by remember { mutableStateOf(false) }
 
@@ -70,27 +68,38 @@ fun RegisterBodyContent(
 
             Logo()
             Spacer(modifier = Modifier.height(60.dp))
+
+            NameField(onChange = { viewModel.name = it })
             EmailField(onChange = { viewModel.email = it })
-            Spacer(Modifier.height(6.dp))
             PasswordField { viewModel.password = it }
-            Spacer(modifier = Modifier.height(6.dp))
             PasswordField { viewModel.password2 = it }
-            Spacer(modifier = Modifier.height(6.dp))
             passwordsMatch =
                 viewModel.password == viewModel.password2 && viewModel.password.length > 8
             emailMatch = viewModel.email.contains("@") && viewModel.email.contains(".")
             ButtonConfirmation(
                 enabledPassword = passwordsMatch,
                 enabledEmail = emailMatch,
-                functionClick = { viewModel.register{
-                    if (it == 0) {
-                        Log.i("Register", "Register Success")
-                        navController.navigate(AppScreens.GameLobby.route)
-                        navController.popBackStack()
+                functionClick = {
+                    viewModel.register {
+                        if (it == 0) {
+                            Log.i("Register", "Register Success")
+                            navController.navigate(AppScreens.GameLobby.route) { navController.popBackStack() }
+
+                        } else {
+                            viewModel.isErrorShow = true
+                        }
                     }
-                } })
+                }
+            )
 
-
+            MismatchDialog(
+                onDismiss = {
+                    viewModel.isErrorShow = false
+                    navController.navigate(AppScreens.LoginScreen.route) { navController.popBackStack() }
+                },
+                text = "No se ha podido registrar el usuario intentelo de nuevo mas tade",
+                show = viewModel.isErrorShow
+            )
         }
     }
 
