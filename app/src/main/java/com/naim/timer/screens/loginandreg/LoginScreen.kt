@@ -113,7 +113,7 @@ fun LoginBodyContent(navController: NavController, viewModel: LoginScreenViewMod
                         viewModel.login{
                         viewModel.numAttepmts += 1
                         Log.i("Login", it.toString())
-                         navController.navigate(AppScreens.GameLobby.route)
+                        //navController.navigate(AppScreens.GameLobby.route)
                         if (it) {
                             Log.i("Login", "Login Success")
                             Toast.makeText(navController.context, "Login Exitoso", Toast.LENGTH_SHORT).show()

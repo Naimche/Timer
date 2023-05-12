@@ -1,7 +1,6 @@
 package com.naim.timer.model
 
 import android.util.Log
-import com.google.firebase.FirebaseApp
 import com.google.firebase.FirebaseNetworkException
 import com.google.firebase.FirebaseTooManyRequestsException
 import com.google.firebase.auth.FirebaseAuth
@@ -10,9 +9,9 @@ import com.google.firebase.auth.FirebaseAuthInvalidCredentialsException
 import com.google.firebase.auth.FirebaseAuthInvalidUserException
 import com.google.firebase.auth.ktx.auth
 import com.google.firebase.firestore.FirebaseFirestore
-import com.google.firebase.firestore.ktx.toObject
 import com.google.firebase.ktx.Firebase
 import com.google.firebase.storage.ktx.storage
+import kotlinx.coroutines.channels.awaitClose
 import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.tasks.await
 import kotlin.coroutines.resume
@@ -71,7 +70,7 @@ class DBM {
                             if (it.isSuccessful) {
                                 Log.i("DBM", "onRegister: True ")
                                 val userAuth = mAuth.currentUser
-                                val user = User(nick, listOf("Personas", "Deportes"))
+                                val user = User(nick, listOf("Personas", "Deportes","Peliculas", "Situaciones"))
                                 fireStore.collection("User").document(userAuth!!.uid).set(user)
                                 callback(0)
                             } else {
@@ -87,6 +86,8 @@ class DBM {
                 callback(1)
             }
         }
+
+
 
 
         fun uploadWordsScript(name: String, words: List<String>, callback: (Int) -> Unit) {
@@ -137,6 +138,39 @@ class DBM {
             }
             emit(list)
         }
+
+        fun getAllCategoriesWthAccess():Flow<Map<String,DataWords>> = flow{
+            Log.i("CATEGORIES", "getAllCategoriesWthAccess Start")
+            val map = mutableMapOf<String,DataWords>()
+            val db = FirebaseFirestore.getInstance()
+            val user = FirebaseAuth.getInstance().currentUser?.let { getUserData(it.uid).first() }
+            Log.i("CATEGORIES", user.toString())
+            if (user != null) {
+                user.dataWordsKey?.forEach { key ->
+                    db.collection("DataWords").document(key).get().await().let {
+                        val dataWords = DataWords.fromSnapshot(it)
+                        Log.i("DBM", it.id)
+                        map[it.id] = dataWords
+                    }
+                }
+            }
+            emit(map)
+
+        }
+
+        fun getUserData(userUid: String): Flow<User> = callbackFlow {
+            val db = FirebaseFirestore.getInstance()
+            var user = User()
+            Log.i("GetUser", "User Uid: $userUid")
+            db.collection("User").document(userUid).get().addOnSuccessListener {
+                Log.i("User", "Obtenido información")
+                val data = it.toObject(User::class.java)
+                if (data != null) user = data
+                trySend(user)
+            }
+            awaitClose { channel.close() }
+        }
+
 
     }
 }

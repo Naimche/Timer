@@ -1,5 +1,6 @@
 package com.naim.timer.screens.game
 
+import android.util.Log
 import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
@@ -17,14 +18,13 @@ class GameLobbyViewModel @Inject constructor(savedStateHandle: SavedStateHandle)
     ViewModel() {
     var isMenuExtended by savedStateHandle.saveable { mutableStateOf(false) }
     var whIsMenu by savedStateHandle.saveable { mutableStateOf(0) }
-    var Dlcs by savedStateHandle.saveable { mutableStateOf(emptyList<DataWords>()) }
+    var dlcs by savedStateHandle.saveable { mutableStateOf(emptyList<DataWords>()) }
     var expanded by savedStateHandle.saveable{ mutableStateOf(false) }
     var expanded2 by savedStateHandle.saveable{ mutableStateOf(false) }
     var expanded3 by savedStateHandle.saveable{ mutableStateOf(false) }
     var expanded4 by savedStateHandle.saveable{ mutableStateOf(false) }
-    var categories = listOf<String>("Category 1", "Category 2", "Category 3")
-    var categories2 = listOf<String>("Category 1", "Category 2", "Category 3")
-    var categories3 = listOf<String>("Category 1", "Category 2", "Category 3")
+    var categories by savedStateHandle.saveable{ mutableStateOf(listOf<String>()) }
+
     var timer4 = listOf<String>("30", "25", "20","15")
     var countSeconds by savedStateHandle.saveable { mutableStateOf(30) }
     var isCountingDown by savedStateHandle.saveable { mutableStateOf(false) }
@@ -33,12 +33,30 @@ class GameLobbyViewModel @Inject constructor(savedStateHandle: SavedStateHandle)
     var selectedCategory3 by savedStateHandle.saveable { mutableStateOf(categories.firstOrNull()?: "") }
     var selectedCategory4 by savedStateHandle.saveable { mutableStateOf(timer4.firstOrNull()?: "") }
 
+    var teamName1 by savedStateHandle.saveable { mutableStateOf("") }
+    var teamName2 by savedStateHandle.saveable { mutableStateOf("") }
+
+    var ignoreCategories by savedStateHandle.saveable{mutableStateOf(false)}
 
     fun updateDlcList() {
         viewModelScope.launch {
             DBM.getAllDlcs().collect() {
-                Dlcs = it
+                dlcs = it
             }
+        }
+    }
+
+    fun updateCategories(){
+        val list = mutableListOf<String>()
+        viewModelScope.launch {
+            Log.i("CATEGORIES", "Launch")
+            DBM.getAllCategoriesWthAccess().collect{
+                it.forEach { mapDatawords ->
+                    list.add(mapDatawords.key)
+                }
+                categories = list
+            }
+
         }
     }
 

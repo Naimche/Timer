@@ -1,4 +1,4 @@
 package com.naim.timer.model
 
-data class User(val name: String, val dataWordsKey : List<String>) {
+data class User(val name: String? = null, val dataWordsKey: List<String>? = null) {
 }

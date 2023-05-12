@@ -51,7 +51,7 @@ fun StartApp() {
     }
 
     //region start Scriptzone
-    //DBM.uploadWordsScript("Deportes", listOf("fútbol", "tenis", "baloncesto", "voleibol", "natación", "atletismo", "ciclismo", "béisbol", "boxeo", "esgrima", "gimnasia", "halterofilia", "hockey", "judo", "karate", "remo", "taekwondo", "tiro con arco", "triatlón", "yoga")){
+    //DBM.uploadWordsScript("Dlc1", listOf("Campana", "Sirena", "Alarma", "Viento", "Rayo", "Trueno", "Llanto", "Gruñido", "Maullido", "Ladrido", "Aullido", "Chirrido", "Rugido", "Silbido", "Tocino", "Huevo", "Helado", "Pizza", "Pastel", "Burrito", "Popcorn", "Coca Cola", "Leche", "Té", "Café", "Cerveza", "Vino", "Whisky", "Garganta", "Estornudo", "Ronquido", "Carcajada", "Bostezo", "Suspiro", "Lloriqueo", "Hipo", "Tos", "Golpe", "Caída", "Explosión", "Disparo", "Chirriar", "Zumbido", "Silencio", "Canto", "Aplausos", "Tararear", "Zapping", "Teléfono", "Timbre", "Ruido de la calle", "Portazo", "Silla", "Pasos", "Ducha", "Lavadora", "Secadora", "Cepillarse los dientes", "Cortar el césped", "Perforadora", "Licuadora", "Tocadiscos", "Piano", "Guitarra", "Batería", "Violín", "Flauta", "Saxofón", "Trompeta", "Helicóptero", "Avión", "Tren", "Coche", "Moto", "Bicicleta", "Barco", "Submarino", "Sátelite", "Ventilador", "Ascensor", "Puerta automática", "Abanico", "Grifo", "Almohada", "Silla de playa", "Tumbona", "Cama", "Saco de dormir", "Tienda de campaña", "Chimenea", "Cascada", "Río", "Mar", "Piscina", "Lluvia", "Nieve", "Tormenta", "Fuego artificial", "Carrusel", "Parque de atracciones")){
 
     //}
 

@@ -25,12 +25,12 @@ import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
-import com.google.rpc.Help
 import com.naim.timer.music.MusicViewModel
-import com.naim.timer.screens.game.utils.CountdownButton
 import com.naim.timer.screens.game.utils.ExposedDropMenuTimer
 import com.naim.timer.screens.game.utils.HelpButton
 import com.naim.timer.screens.game.utils.ImageCarousel
+import com.naim.timer.screens.game.utils.TeamField
+import com.naim.timer.screens.game.utils.Titulo
 import com.naim.timer.screens.loginandreg.*
 import com.naim.timer.ui.theme.Lobster
 
@@ -49,18 +49,14 @@ fun GameLobbyBodyContent(
 
 
     val fabAnimationProgress by animateFloatAsState(
-        targetValue = if (viewModel.isMenuExtended) 1f else 0f,
-        animationSpec = tween(
-            durationMillis = 1000,
-            easing = LinearEasing
+        targetValue = if (viewModel.isMenuExtended) 1f else 0f, animationSpec = tween(
+            durationMillis = 1000, easing = LinearEasing
         )
     )
 
     val clickAnimationProgress by animateFloatAsState(
-        targetValue = if (viewModel.isMenuExtended) 1f else 0f,
-        animationSpec = tween(
-            durationMillis = 400,
-            easing = LinearEasing
+        targetValue = if (viewModel.isMenuExtended) 1f else 0f, animationSpec = tween(
+            durationMillis = 400, easing = LinearEasing
         )
     )
 
@@ -97,7 +93,7 @@ fun GameLobbyBodyContent(
 
     ) {
     Surface(modifier = Modifier.fillMaxSize()) {
-
+        viewModel.updateCategories()
         Background()
         //region start configurationGame
         when (viewModel.whIsMenu) {
@@ -124,12 +120,9 @@ fun GameLobbyBodyContent(
 
                         ) {
                         Text(
-                            text = "¡Bienvenido a Timer, el juego de mesa Times Up ahora en tu móvil! Adivina palabras y frases antes de que se acabe el tiempo!",
+                            text = "¡Bienvenido a Timer!",
                             modifier = Modifier.padding(
-                                start = 16.dp,
-                                end = 10.dp,
-                                top = 16.dp,
-                                bottom = 16.dp
+                                start = 16.dp, end = 10.dp, top = 16.dp, bottom = 16.dp
                             ),
                             style = TextStyle(color = Color.White),
                             fontSize = 26.sp,
@@ -138,7 +131,7 @@ fun GameLobbyBodyContent(
                         )
                     }
                     Button(
-                        onClick = { /* acción al pulsar el botón */ },
+                        onClick = { navController.navigate("Game") },
                         modifier = Modifier
                             .padding(horizontal = 24.dp, vertical = 16.dp)
                             .clip(RoundedCornerShape(16.dp)),
@@ -153,14 +146,37 @@ fun GameLobbyBodyContent(
                             modifier = Modifier.padding(4.dp)
                         )
                     }
+                    Row {
+                        Checkbox(
+                            checked = viewModel.ignoreCategories,
+                            onCheckedChange = { viewModel.ignoreCategories = viewModel.ignoreCategories.not()},
+                            modifier = Modifier.padding(top = 8.dp, end = 2.dp),
+                            colors = CheckboxDefaults.colors(
+                                checkedColor = Color(0xFFfae079),
+                                uncheckedColor = Color(0xFFfae079),
+                                checkmarkColor = Color(0xFFB885FF)
+                            )
+                        )
+                        Text(
+                            text = "Ignorar Categorias",
+                            color = Color(0xFFB885FF),
+                            fontSize = 20.sp,
+                            fontFamily = Lobster,
+                            modifier = Modifier.padding(top = 17.dp)
+                        )
+                        Spacer(modifier =Modifier.width(0.dp))
+                        HelpButton("Si activas esta opción, el juego no tendrá en cuenta las categorías seleccionadas y se jugará con todas las categorías disponibles.")
+
+                    }
 
 
                 }
 
                 //endregion
             }
-            1 -> {
 
+            1 -> {
+                viewModel.updateCategories()
                 //region start configurationGame
                 Column(modifier = Modifier.fillMaxSize()) {
 
@@ -181,32 +197,23 @@ fun GameLobbyBodyContent(
                         modifier = Modifier.padding(start = 16.dp)
                     ) {
                         Row() {
-                            Text(
-                                text = "Categoría 1",
-                                modifier = Modifier.padding(
-                                    start = 0.dp,
-                                    end = 10.dp,
-                                    top = 16.dp,
-                                    bottom = 8.dp
-                                ),
-                                style = TextStyle(color = Color.White),
-                                fontSize = 26.sp,
-                                fontFamily = Lobster,
-                                color = Color(0xFFB885FF)
+                            Titulo(texto = "Equipo 1")
+                            Spacer(modifier = Modifier.width(110.dp))
+                            Titulo(texto = "Equipo 2")
+                        }
+                        Row {
+                            TeamField(
+                                onChange = { viewModel.teamName1 = it }, width = 155, "Equipo 1"
                             )
-                            Text(
-                                text = "Categoría 2",
-                                modifier = Modifier.padding(
-                                    start = 85.dp,
-                                    end = 10.dp,
-                                    top = 16.dp,
-                                    bottom = 8.dp
-                                ),
-                                style = TextStyle(color = Color.White),
-                                fontSize = 26.sp,
-                                fontFamily = Lobster,
-                                color = Color(0xFFB885FF)
+                            Spacer(modifier = Modifier.width(50.dp))
+                            TeamField(
+                                onChange = { viewModel.teamName2 = it }, width = 155, "Equipo 2"
                             )
+                        }
+                        Row {
+                            Titulo(texto = "Categoría 1")
+                            Spacer(modifier = Modifier.width(85.dp))
+                            Titulo(texto = "Categoria 2")
                         }
 
                         Row {
@@ -218,6 +225,7 @@ fun GameLobbyBodyContent(
                                 },
                                 onDismissRequest = { viewModel.expanded = false },
                                 selectedCategory = viewModel.selectedCategory,
+
                             ) {
                                 viewModel.categories.forEach { categ ->
                                     DropdownMenuItem(onClick = {
@@ -237,7 +245,7 @@ fun GameLobbyBodyContent(
                                 onDismissRequest = { viewModel.expanded2 = false },
                                 selectedCategory = viewModel.selectedCategory2,
                             ) {
-                                viewModel.categories2.forEach { categ ->
+                                viewModel.categories.forEach { categ ->
                                     DropdownMenuItem(onClick = {
                                         viewModel.expanded2 = false
                                         viewModel.selectedCategory2 = categ
@@ -252,85 +260,55 @@ fun GameLobbyBodyContent(
 
 
                         Row {
-                            Text(
-                                text = "Categoría 3",
-                                modifier = Modifier.padding(
-                                    start = 0.dp,
-                                    end = 10.dp,
-                                    top = 16.dp,
-                                    bottom = 8.dp
-                                ),
-                                style = TextStyle(color = Color.White),
-                                fontSize = 26.sp,
-                                fontFamily = Lobster,
-                                color = Color(0xFFB885FF)
-                            )
-
-                            Text(
-                                text = "Timer",
-                                modifier = Modifier.padding(
-                                    start = 85.dp,
-                                    end = 10.dp,
-                                    top = 16.dp,
-                                    bottom = 8.dp
-                                ),
-                                style = TextStyle(color = Color.White),
-                                fontSize = 26.sp,
-                                fontFamily = Lobster,
-                                color = Color(0xFFB885FF)
-                            )
+                            Titulo(texto = "Categoria 3")
+                            Spacer(modifier = Modifier.width(85.dp))
+                            Titulo(texto = "Timer")
                         }
-                            Row {
-                                ExposedDropMenuTimer(
-                                    expanded = viewModel.expanded3,
-                                    onExpandedChange = {
-                                        viewModel.expanded3 = viewModel.expanded3.not()
-                                    },
-                                    onDismissRequest = { viewModel.expanded3 = false },
-                                    selectedCategory = viewModel.selectedCategory3,
-                                ) {
-                                    viewModel.categories3.forEach { categ ->
-                                        DropdownMenuItem(onClick = {
-                                            viewModel.expanded3 = false
-                                            viewModel.selectedCategory3 = categ
-                                        }) {
-                                            Text(text = categ)
-                                        }
+                        Row {
+                            ExposedDropMenuTimer(
+                                expanded = viewModel.expanded3,
+                                onExpandedChange = {
+                                    viewModel.expanded3 = viewModel.expanded3.not()
+                                },
+                                onDismissRequest = { viewModel.expanded3 = false },
+                                selectedCategory = viewModel.selectedCategory3,
+                            ) {
+                                viewModel.categories.forEach { categ ->
+                                    DropdownMenuItem(onClick = {
+                                        viewModel.expanded3 = false
+                                        viewModel.selectedCategory3 = categ
+                                    }) {
+                                        Text(text = categ)
                                     }
                                 }
+                            }
 
-                                Spacer(modifier = Modifier.width(52.dp))
-                                ExposedDropMenuTimer(
-                                    expanded = viewModel.expanded4,
-                                    onExpandedChange = {
-                                        viewModel.expanded4 = viewModel.expanded4.not()
-                                    },
-                                    onDismissRequest = { viewModel.expanded4 = false },
-                                    selectedCategory = viewModel.selectedCategory4,
-                                    leadingIcon = {
-                                        Icon(
-                                            imageVector = Icons.Default.Timer,
-                                            contentDescription = "Timer",
-                                        )
+                            Spacer(modifier = Modifier.width(52.dp))
+                            ExposedDropMenuTimer(expanded = viewModel.expanded4,
+                                onExpandedChange = {
+                                    viewModel.expanded4 = viewModel.expanded4.not()
+                                },
+                                onDismissRequest = { viewModel.expanded4 = false },
+                                selectedCategory = viewModel.selectedCategory4,
+                                leadingIcon = {
+                                    Icon(
+                                        imageVector = Icons.Default.Timer,
+                                        contentDescription = "Timer",
+                                    )
+                                }) {
+                                viewModel.timer4.forEach { categ ->
+                                    DropdownMenuItem(onClick = {
+                                        viewModel.expanded4 = false
+                                        viewModel.selectedCategory4 = categ
+                                    }) {
+                                        Text(text = categ)
                                     }
-                                ) {
-                                    viewModel.timer4.forEach { categ ->
-                                        DropdownMenuItem(onClick = {
-                                            viewModel.expanded4 = false
-                                            viewModel.selectedCategory4 = categ
-                                        }) {
-                                            Text(text = categ)
-                                        }
 
-                                    }
                                 }
+                            }
 
 
                         }
-
-
-
-
 
 
 
@@ -342,6 +320,7 @@ fun GameLobbyBodyContent(
 
                 //endregion
             }
+
             2 -> {
                 //region start shop
                 viewModel.updateDlcList()
@@ -373,7 +352,7 @@ fun GameLobbyBodyContent(
                         )
                     }
 
-                    ImageCarousel(dlcs = viewModel.Dlcs)
+                    ImageCarousel(dlcs = viewModel.dlcs)
 
 
                     Spacer(modifier = Modifier.height(86.dp))
@@ -396,27 +375,22 @@ fun GameLobbyBodyContent(
 
             CustomBottomNavigation()
             Circle(
-                color = MaterialTheme.colors.primary.copy(alpha = 0.5f),
-                animationProgress = 0.5f
+                color = MaterialTheme.colors.primary.copy(alpha = 0.5f), animationProgress = 0.5f
             )
 
-            FabGroup(
-                renderEffect = renderEffect,
+            FabGroup(renderEffect = renderEffect,
                 animationProgress = fabAnimationProgress,
                 onClick1 = { },
                 onClick2 = { },
                 onClick3 = {})
-            FabGroup(
-                renderEffect = null,
+            FabGroup(renderEffect = null,
                 animationProgress = fabAnimationProgress,
                 toggleAnimation = toggleAnimation,
                 onClick1 = { viewModel.whIsMenu = 0 },
                 onClick2 = { viewModel.whIsMenu = 1 },
-                onClick3 = { viewModel.whIsMenu = 2 }
-            )
+                onClick3 = { viewModel.whIsMenu = 2 })
             Circle(
-                color = Color.White,
-                animationProgress = clickAnimationProgress
+                color = Color.White, animationProgress = clickAnimationProgress
             )
         }
 
