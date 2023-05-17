@@ -26,6 +26,7 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
 import com.naim.timer.music.MusicViewModel
+import com.naim.timer.screens.game.utils.CircularTimerViewModel
 import com.naim.timer.screens.game.utils.ExposedDropMenuTimer
 import com.naim.timer.screens.game.utils.HelpButton
 import com.naim.timer.screens.game.utils.ImageCarousel
@@ -83,6 +84,7 @@ fun GameLobbyBodyContent(
 @Composable
 fun GameLobbyBodyContent(
     viewModel: GameLobbyViewModel = hiltViewModel(),
+    circularTimerViewModel: CircularTimerViewModel = hiltViewModel(),
     navController: NavController,
     musicViewModel: MusicViewModel = hiltViewModel(),
     renderEffect: androidx.compose.ui.graphics.RenderEffect?,
@@ -149,7 +151,9 @@ fun GameLobbyBodyContent(
                     Row {
                         Checkbox(
                             checked = viewModel.ignoreCategories,
-                            onCheckedChange = { viewModel.ignoreCategories = viewModel.ignoreCategories.not()},
+                            onCheckedChange = {
+                                viewModel.ignoreCategories = viewModel.ignoreCategories.not()
+                            },
                             modifier = Modifier.padding(top = 8.dp, end = 2.dp),
                             colors = CheckboxDefaults.colors(
                                 checkedColor = Color(0xFFfae079),
@@ -164,7 +168,7 @@ fun GameLobbyBodyContent(
                             fontFamily = Lobster,
                             modifier = Modifier.padding(top = 17.dp)
                         )
-                        Spacer(modifier =Modifier.width(0.dp))
+                        Spacer(modifier = Modifier.width(0.dp))
                         HelpButton("Si activas esta opción, el juego no tendrá en cuenta las categorías seleccionadas y se jugará con todas las categorías disponibles.")
 
                     }
@@ -226,7 +230,7 @@ fun GameLobbyBodyContent(
                                 onDismissRequest = { viewModel.expanded = false },
                                 selectedCategory = viewModel.selectedCategory,
 
-                            ) {
+                                ) {
                                 viewModel.categories.forEach { categ ->
                                     DropdownMenuItem(onClick = {
                                         viewModel.expanded = false
@@ -300,6 +304,7 @@ fun GameLobbyBodyContent(
                                     DropdownMenuItem(onClick = {
                                         viewModel.expanded4 = false
                                         viewModel.selectedCategory4 = categ
+                                        circularTimerViewModel.initialTotalTime = categ.toLong()
                                     }) {
                                         Text(text = categ)
                                     }
@@ -309,8 +314,6 @@ fun GameLobbyBodyContent(
 
 
                         }
-
-
 
 
                     }
