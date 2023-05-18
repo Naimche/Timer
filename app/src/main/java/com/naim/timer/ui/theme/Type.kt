@@ -12,6 +12,10 @@ import com.naim.timer.R
 val Lobster = FontFamily(
     Font(R.font.lobster_regular, FontWeight.Normal)
 )
+
+val Poppins = FontFamily(
+    Font(R.font.poppins, FontWeight.SemiBold),
+)
 val Typography = Typography(
     body1 = TextStyle(
         fontFamily = FontFamily.Default,

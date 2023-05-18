@@ -139,7 +139,7 @@ fun CircularTimerWithBackground(
         animateValue(animatedProgress, animatedProgressRef)
     }
 
-    Box(modifier = modifier.size(300.dp)) {
+    Box(modifier = modifier.size(200.dp)) {
         RoundedCircularProgressIndicator(
             progress = animatedProgressRef.value,
             strokeWidth = strokeWidth,
@@ -173,7 +173,7 @@ private suspend fun animateValue(targetValue: Float, animatedValue: MutableState
 private fun ScreenContentPreview() {
     TimerTheme() {
         Surface {
-            CircularTimerWithBackground(progress = 0.5f)
+            CircularTimerWithBackground(progress = 0.5f,)
         }
 
     }

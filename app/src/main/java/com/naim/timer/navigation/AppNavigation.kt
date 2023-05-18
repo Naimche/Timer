@@ -11,9 +11,9 @@ import com.naim.timer.screens.loginandreg.FirstScreen
 import com.naim.timer.screens.loginandreg.RegisterScreen
 
 @Composable
-fun AppNavigation(){
+fun AppNavigation(startDestination: String) {
     val navController = rememberNavController()
-    NavHost(navController = navController, startDestination = AppScreens.LoginScreen.route){
+    NavHost(navController = navController, startDestination = startDestination){
         composable(AppScreens.LoginScreen.route){
            FirstScreen(navController)
         }

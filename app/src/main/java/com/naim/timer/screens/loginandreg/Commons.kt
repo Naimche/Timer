@@ -54,7 +54,6 @@ fun PasswordField(onChange: (String) -> Unit) {
 
 @Composable
 fun Background() {
-    val boxSize = with(LocalDensity.current) { 300.dp.toPx() }
     Box(
         modifier = Modifier
             .fillMaxSize()

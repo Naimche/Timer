@@ -2,6 +2,7 @@ package com.naim.timer.screens.game
 
 import android.annotation.SuppressLint
 import android.os.Build
+import android.util.Log
 import androidx.compose.animation.core.LinearEasing
 import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.animation.core.tween
@@ -26,14 +27,16 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
 import com.naim.timer.music.MusicViewModel
-import com.naim.timer.screens.game.utils.CircularTimerViewModel
+import com.naim.timer.screens.game.ingame.GameViewModel
 import com.naim.timer.screens.game.utils.ExposedDropMenuTimer
 import com.naim.timer.screens.game.utils.HelpButton
 import com.naim.timer.screens.game.utils.ImageCarousel
 import com.naim.timer.screens.game.utils.TeamField
+import com.naim.timer.screens.game.utils.TimerStartButton
 import com.naim.timer.screens.game.utils.Titulo
 import com.naim.timer.screens.loginandreg.*
 import com.naim.timer.ui.theme.Lobster
+import java.util.Timer
 
 @SuppressLint("UnusedMaterialScaffoldPaddingParameter")
 @Composable
@@ -84,7 +87,7 @@ fun GameLobbyBodyContent(
 @Composable
 fun GameLobbyBodyContent(
     viewModel: GameLobbyViewModel = hiltViewModel(),
-    circularTimerViewModel: CircularTimerViewModel = hiltViewModel(),
+    circularTimerViewModel: GameViewModel = hiltViewModel(),
     navController: NavController,
     musicViewModel: MusicViewModel = hiltViewModel(),
     renderEffect: androidx.compose.ui.graphics.RenderEffect?,
@@ -102,6 +105,8 @@ fun GameLobbyBodyContent(
 
             0 -> {
                 //region start configurationGame
+                TimerSettings.teamName = viewModel.teamName1
+                TimerSettings.teamName2 = viewModel.teamName2
                 Column(
                     horizontalAlignment = Alignment.CenterHorizontally,
                     verticalArrangement = Arrangement.SpaceAround,
@@ -235,6 +240,7 @@ fun GameLobbyBodyContent(
                                     DropdownMenuItem(onClick = {
                                         viewModel.expanded = false
                                         viewModel.selectedCategory = categ
+                                        TimerSettings.selectedCategory = categ
                                     }) {
                                         Text(text = categ)
                                     }
@@ -253,6 +259,7 @@ fun GameLobbyBodyContent(
                                     DropdownMenuItem(onClick = {
                                         viewModel.expanded2 = false
                                         viewModel.selectedCategory2 = categ
+                                        TimerSettings.selectedCategory2 = categ
                                     }) {
                                         Text(text = categ)
                                     }
@@ -281,6 +288,7 @@ fun GameLobbyBodyContent(
                                     DropdownMenuItem(onClick = {
                                         viewModel.expanded3 = false
                                         viewModel.selectedCategory3 = categ
+                                        TimerSettings.selectedCategory3 = categ
                                     }) {
                                         Text(text = categ)
                                     }
@@ -304,7 +312,8 @@ fun GameLobbyBodyContent(
                                     DropdownMenuItem(onClick = {
                                         viewModel.expanded4 = false
                                         viewModel.selectedCategory4 = categ
-                                        circularTimerViewModel.initialTotalTime = categ.toLong()
+                                        TimerSettings.countDownInterval = categ.toLong() * 1000
+                                        Log.i("Timer", circularTimerViewModel.initialTotalTime.toString())
                                     }) {
                                         Text(text = categ)
                                     }
@@ -401,6 +410,7 @@ fun GameLobbyBodyContent(
 
 
     }
+
 
 }
 
