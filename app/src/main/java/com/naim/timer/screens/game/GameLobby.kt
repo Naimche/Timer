@@ -100,6 +100,7 @@ fun GameLobbyBodyContent(
     Surface(modifier = Modifier.fillMaxSize()) {
         viewModel.updateCategories()
         Background()
+
         //region start configurationGame
         when (viewModel.whIsMenu) {
 
@@ -185,7 +186,7 @@ fun GameLobbyBodyContent(
             }
 
             1 -> {
-                viewModel.updateCategories()
+
                 //region start configurationGame
                 Column(modifier = Modifier.fillMaxSize()) {
 
@@ -336,6 +337,7 @@ fun GameLobbyBodyContent(
             2 -> {
                 //region start shop
                 viewModel.updateDlcList()
+
 
                 Column(
                     horizontalAlignment = Alignment.CenterHorizontally,

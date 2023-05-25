@@ -7,6 +7,7 @@ import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import androidx.lifecycle.viewmodel.compose.saveable
+import com.naim.timer.model.DataWords
 import com.naim.timer.screens.game.GameLobbyViewModel
 import com.naim.timer.screens.game.TimerSettings
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -23,8 +24,8 @@ class GameViewModel @Inject constructor(
     private var countDownTimer: CountDownTimer? = null
     val countDownInterval by savableStateHandle.saveable { mutableStateOf(1000L) } // 1 second
     var initialTotalTime by savableStateHandle.saveable { mutableStateOf(TimerSettings.countDownInterval) } // 30 seconds
-    var timeleft by savableStateHandle.saveable{ mutableStateOf(initialTotalTime)}
-    var start by savableStateHandle.saveable{ mutableStateOf(true)}
+    var timeleft by savableStateHandle.saveable { mutableStateOf(initialTotalTime) }
+    var start by savableStateHandle.saveable { mutableStateOf(true) }
 
     val isPlaying = mutableStateOf(false)
 
@@ -50,6 +51,13 @@ class GameViewModel @Inject constructor(
         }.start()
     }
 
+
+    fun dataWordsByDB() {
+        val list = mutableListOf("")
+        TimerSettings.allCategory.values.forEach { words -> words.words.forEach { list.add(it) } }
+        Log.i("GameTimer", list.toString())
+
+    }
 
 }
 

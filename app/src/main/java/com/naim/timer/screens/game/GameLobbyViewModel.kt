@@ -49,17 +49,23 @@ class GameLobbyViewModel @Inject constructor(savedStateHandle: SavedStateHandle)
 
     fun updateCategories(){
         val list = mutableListOf<String>()
+        val allDatawords = mutableMapOf<String,DataWords>()
         viewModelScope.launch {
             Log.i("CATEGORIES", "Launch")
             DBM.getAllCategoriesWthAccess().collect{
                 it.forEach { mapDatawords ->
                     list.add(mapDatawords.key)
+                    allDatawords[mapDatawords.key] = mapDatawords.value
                 }
                 categories = list
+                TimerSettings.allCategory = allDatawords
+
             }
 
         }
     }
+
+
 
 
 }
