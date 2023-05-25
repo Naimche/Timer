@@ -129,8 +129,8 @@ fun CircularTimerWithBackground(
     progress: Float,
     modifier: Modifier = Modifier,
     strokeWidth: Dp = ProgressIndicatorDefaults.StrokeWidth,
-    foreGroundColor: Color = MaterialTheme.colors.primary,
-    backgroundColor: Color = MaterialTheme.colors.primary.copy(alpha = 0.3f),
+    foreGroundColor: Color = Color(0xFFF55C7A),
+    backgroundColor: Color = Color(0xFFF55C7A).copy(alpha = 0.3f),
 ) {
     val animatedProgress by animateFloatAsState(targetValue = progress)
     val animatedProgressRef = remember { mutableStateOf(0f) }
@@ -144,7 +144,8 @@ fun CircularTimerWithBackground(
             progress = animatedProgressRef.value,
             strokeWidth = strokeWidth,
             color = foreGroundColor,
-            modifier = Modifier.fillMaxSize()
+            modifier = Modifier.fillMaxSize(),
+
         )
         RoundedCircularProgressIndicator(
             progress = 1f,
