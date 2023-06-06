@@ -71,19 +71,46 @@ class GameViewModel @Inject constructor(
     }
 
 
-
-
-
-
     fun dataWordsByDB() {
-        val list = mutableListOf("")
-        TimerSettings.allCategory.values.forEach { words -> words.words.forEach { list.add(it) } }
-        Log.i("GameTimer", list.toString())
-        list.shuffle()
-        for (i in 0..30) {
-            listWords.add(list[i])
+        val list = mutableListOf<String>()
+        Log.i("ignorar", TimerSettings.ignoreCategory.toString())
+        if (TimerSettings.selectedCategory.isNullOrBlank() && TimerSettings.selectedCategory2.isNullOrBlank() && TimerSettings.selectedCategory3.isNullOrBlank()) {
+            TimerSettings.ignoreCategory = true
         }
+
+        if (TimerSettings.ignoreCategory ) {
+            TimerSettings.allCategory.values.forEach { dataWords ->
+                dataWords.words.forEach {
+                    if (!list.contains(it)) {
+                        list.add(it)
+                    }
+                }
+            }
+        } else {
+            TimerSettings.allCategory[TimerSettings.selectedCategory]?.words?.forEach {
+                if (!list.contains(it)) {
+                    list.add(it)
+                }
+            }
+
+            TimerSettings.allCategory[TimerSettings.selectedCategory2]?.words?.forEach {
+                if (!list.contains(it)) {
+                    list.add(it)
+                }
+            }
+
+            TimerSettings.allCategory[TimerSettings.selectedCategory3]?.words?.forEach {
+                if (!list.contains(it)) {
+                    list.add(it)
+                }
+            }
+        }
+
+        list.shuffle()
+        listWords.addAll(list.take(30))
+        Log.i("Lista", listWords.size.toString())
     }
+
 
     fun nextRound() {
         round++

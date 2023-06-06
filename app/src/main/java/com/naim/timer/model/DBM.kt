@@ -176,3 +176,4 @@ class DBM {
 
     }
 }
+//entidad relacion, casos de usos e interfaces.

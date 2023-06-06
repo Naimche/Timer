@@ -16,6 +16,12 @@ val Lobster = FontFamily(
 val Poppins = FontFamily(
     Font(R.font.poppins, FontWeight.SemiBold),
 )
+val Roboto = FontFamily(
+    Font(R.font.roboto, FontWeight.SemiBold),
+)
+val RobotoBold = FontFamily(
+    Font(R.font.robotobold, FontWeight.SemiBold),
+)
 val Typography = Typography(
     body1 = TextStyle(
         fontFamily = FontFamily.Default,

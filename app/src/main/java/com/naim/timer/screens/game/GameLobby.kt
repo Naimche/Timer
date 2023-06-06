@@ -27,16 +27,15 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
 import com.naim.timer.music.MusicViewModel
+import com.naim.timer.navigation.AppScreens
 import com.naim.timer.screens.game.ingame.GameViewModel
 import com.naim.timer.screens.game.utils.ExposedDropMenuTimer
 import com.naim.timer.screens.game.utils.HelpButton
 import com.naim.timer.screens.game.utils.ImageCarousel
 import com.naim.timer.screens.game.utils.TeamField
-import com.naim.timer.screens.game.utils.TimerStartButton
 import com.naim.timer.screens.game.utils.Titulo
 import com.naim.timer.screens.loginandreg.*
 import com.naim.timer.ui.theme.Lobster
-import java.util.Timer
 
 @SuppressLint("UnusedMaterialScaffoldPaddingParameter")
 @Composable
@@ -159,6 +158,7 @@ fun GameLobbyBodyContent(
                             checked = viewModel.ignoreCategories,
                             onCheckedChange = {
                                 viewModel.ignoreCategories = viewModel.ignoreCategories.not()
+                                TimerSettings.ignoreCategory = viewModel.ignoreCategories
                             },
                             modifier = Modifier.padding(top = 8.dp, end = 2.dp),
                             colors = CheckboxDefaults.colors(
@@ -387,14 +387,16 @@ fun GameLobbyBodyContent(
             contentAlignment = Alignment.BottomCenter
         ) {
 
-            CustomBottomNavigation()
+            CustomBottomNavigation(onclick1 = {
+                navController.navigate(AppScreens.GameSettings.route)
+            }, onclick2 = {navController.navigate(AppScreens.LoginScreen.route)})
             Circle(
                 color = MaterialTheme.colors.primary.copy(alpha = 0.5f), animationProgress = 0.5f
             )
 
             FabGroup(renderEffect = renderEffect,
                 animationProgress = fabAnimationProgress,
-                onClick1 = { },
+                onClick1 = {},
                 onClick2 = { },
                 onClick3 = {})
             FabGroup(renderEffect = null,

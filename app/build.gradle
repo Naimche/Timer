@@ -68,6 +68,8 @@ dependencies {
     androidTestImplementation "androidx.compose.ui:ui-test-junit4:$compose_ui_version"
     debugImplementation "androidx.compose.ui:ui-tooling:$compose_ui_version"
     debugImplementation "androidx.compose.ui:ui-test-manifest:$compose_ui_version"
+    implementation "androidx.compose.ui:ui-util:$compose_ui_version"
+
 
     //hilt dependencies
     implementation("com.google.dagger:hilt-android:2.45")

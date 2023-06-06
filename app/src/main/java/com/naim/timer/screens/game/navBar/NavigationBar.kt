@@ -74,7 +74,7 @@ fun FabGroup(
     ) {
 
         AnimatedFab(
-            icon = Icons.Default.PhotoCamera,
+            icon = Icons.Default.ShoppingCart,
             modifier = Modifier
                 .padding(
                     PaddingValues(
@@ -87,7 +87,7 @@ fun FabGroup(
         )
 
         AnimatedFab(
-            icon = Icons.Default.Settings,
+            icon = Icons.Default.PlayArrow,
             modifier = Modifier.padding(
                 PaddingValues(
                     bottom = 88.dp,
@@ -98,7 +98,7 @@ fun FabGroup(
         )
 
         AnimatedFab(
-            icon = Icons.Default.ShoppingCart,
+            icon = Icons.Default.Settings,
             modifier = Modifier.padding(
                 PaddingValues(
                     bottom = 72.dp,
@@ -165,7 +165,7 @@ fun getRenderEffect(): RenderEffect {
 }
 
 @Composable
-fun CustomBottomNavigation() {
+fun CustomBottomNavigation(onclick1: () -> Unit, onclick2: () -> Unit) {
     Row(
         horizontalArrangement = Arrangement.SpaceBetween,
         verticalAlignment = Alignment.CenterVertically,
@@ -177,10 +177,15 @@ fun CustomBottomNavigation() {
             )
             .padding(horizontal = 40.dp)
     ) {
-        listOf(Icons.Filled.CalendarToday, Icons.Filled.Group).map { image ->
-            IconButton(onClick = { }) {
-                Icon(imageVector = image, contentDescription = null, tint = Color.White)
-            }
+
+
+        IconButton(onClick = onclick1) {
+            Icon(imageVector = Icons.Filled.Info, contentDescription = null, tint = Color.White)
         }
+        IconButton(onClick = onclick2) {
+            Icon(imageVector = Icons.Filled.Logout, contentDescription = null, tint = Color.White)
+        }
+
+
     }
 }

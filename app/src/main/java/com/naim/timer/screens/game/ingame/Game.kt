@@ -63,7 +63,7 @@ fun GameBody(navController: NavController, viewModel: GameViewModel = hiltViewMo
 
         //Cuando la lista este vacia le añadimos los elementos de la lista original
 
-        if(viewModel.tempWordList.isEmpty()) {
+        if (viewModel.tempWordList.isEmpty()) {
             Log.i("Lista", viewModel.listWords.toString())
             viewModel.tempWordList.addAll(viewModel.listWords)
             viewModel.start = false
@@ -236,27 +236,116 @@ fun GameBody(navController: NavController, viewModel: GameViewModel = hiltViewMo
                 }
 
             } else {
-                if (viewModel.isFirstLaunch){
+                if (viewModel.isFirstLaunch) {
                     viewModel.dataWordsByDB()
                     viewModel.isFirstLaunch = false
                 }
                 viewModel.wordIndex = 0
                 viewModel.finishTimerImmediately()
                 Text(
-                    text = TimerSettings.teamName.uppercase(),
-                    fontSize = 54.sp,
-                    fontFamily = Poppins
-                )
-                Text(
                     text = "Ronda " + viewModel.round.toString(),
-                    fontSize = 54.sp,
-                    fontFamily = Poppins
+                    fontSize = 74.sp,
+                    fontFamily = Poppins,
+                    modifier = Modifier.padding(top = 20.dp),
+                    color = Color(0xFFFF70A6)
                 )
+                Row(horizontalArrangement = Arrangement.Start, modifier = Modifier.fillMaxWidth().padding(start = 20.dp)) {
+                    if (viewModel.turn) {
+                        Text(
+                            text = if (TimerSettings.teamName.uppercase()
+                                    .isNotBlank()
+                            ) TimerSettings.teamName.uppercase() else "Equipo 1",
+                            fontSize = 54.sp,
+                            fontFamily = Poppins
+                        )
+                    } else {
+                        Text(
+                            text = if (TimerSettings.teamName.uppercase()
+                                    .isNotBlank()
+                            ) TimerSettings.teamName2.uppercase() else "Equipo 2",
+                            fontSize = 54.sp,
+                            fontFamily = Poppins
+                        )
+                    }
+                }
+
+
+
+
+
+                Row() {
+                    Card(
+                        modifier = Modifier
+                            .padding(top = 10.dp)
+                            .width(350.dp)
+                            .height(200.dp),
+                        elevation = 9.dp,
+                        backgroundColor = Color(0xFF9E1D1D),
+
+
+                        ) {
+                        Column(
+                            horizontalAlignment = Alignment.Start,
+                            verticalArrangement = Arrangement.Center
+                        ) {
+                            Row(modifier = Modifier.padding(start = 20.dp, top = 10.dp)) {
+                                Text(
+                                    text = if (TimerSettings.teamName.uppercase()
+                                            .isNotBlank()
+                                    ) TimerSettings.teamName.uppercase() else "Equipo 1",
+                                    fontSize = 44.sp,
+                                    fontFamily = Poppins,
+                                    color = Color(0xFFFFFFFF)
+
+                                )
+                                Spacer(modifier = Modifier.weight(1f))
+
+                                Text(
+                                    text = viewModel.scoreTeam1.toString(),
+                                    fontSize = 44.sp,
+                                    fontFamily = Poppins,
+                                    color = Color(0xFF8093F1),
+                                    textAlign = TextAlign.Center,
+                                    modifier = Modifier.padding(end = 10.dp)
+                                )
+
+
+                            }
+
+                            Row(modifier = Modifier.padding(start = 20.dp, top = 10.dp)) {
+                                Text(
+                                    text = if (TimerSettings.teamName2.uppercase()
+                                            .isNotBlank()
+                                    ) TimerSettings.teamName2.uppercase() else "Equipo 2",
+                                    fontSize = 44.sp,
+                                    fontFamily = Poppins,
+                                    color = Color(0xFFFFFFFF)
+
+                                )
+                                Spacer(modifier = Modifier.weight(1f))
+
+                                Text(
+                                    text = viewModel.scoreTeam2.toString(),
+                                    fontSize = 44.sp,
+                                    fontFamily = Poppins,
+                                    color = Color(0xFF8093F1),
+                                    textAlign = TextAlign.End,
+                                    modifier = Modifier.padding(end = 10.dp)
+                                )
+                            }
+                        }
+
+
+                    }
+
+
+                }
+                Spacer(modifier = Modifier.height(30.dp))
                 Button(onClick = {
                     viewModel.start = true
 
                 }) {
-                    Text(text = "Info reglas")
+                    Text(text = "¡Empezar!")
                 }
 
 

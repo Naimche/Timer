@@ -11,6 +11,7 @@ class TimerSettings {
         var selectedCategory2 :String? = null
         var selectedCategory3 :String? = null
         lateinit var allCategory : Map<String, DataWords>
+        var ignoreCategory : Boolean = false
 
     }
 }
