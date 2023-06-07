@@ -16,6 +16,7 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.asComposeRenderEffect
 import androidx.compose.ui.text.TextStyle
@@ -23,12 +24,14 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.compose.ui.window.DialogProperties
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
 import com.naim.timer.music.MusicViewModel
 import com.naim.timer.navigation.AppScreens
 import com.naim.timer.screens.game.ingame.GameViewModel
+import com.naim.timer.screens.game.utils.CustomAlertDialog
 import com.naim.timer.screens.game.utils.ExposedDropMenuTimer
 import com.naim.timer.screens.game.utils.HelpButton
 import com.naim.timer.screens.game.utils.ImageCarousel
@@ -97,6 +100,8 @@ fun GameLobbyBodyContent(
 
     ) {
     Surface(modifier = Modifier.fillMaxSize()) {
+        if (viewModel.categories.isNotEmpty()) viewModel.loading = false
+
         viewModel.updateCategories()
         Background()
 
@@ -104,6 +109,19 @@ fun GameLobbyBodyContent(
         when (viewModel.whIsMenu) {
 
             0 -> {
+                if (viewModel.loading){
+                    Box(Modifier.fillMaxSize()) {
+                        AlertDialog(
+                            onDismissRequest = { },
+                            properties = DialogProperties(dismissOnBackPress = false, dismissOnClickOutside = false),
+                            backgroundColor = Color.Transparent,
+                            buttons = {},
+                            modifier = Modifier
+                                .fillMaxSize()
+
+                        )
+                    }
+                }
                 //region start configurationGame
                 TimerSettings.teamName = viewModel.teamName1
                 TimerSettings.teamName2 = viewModel.teamName2
@@ -152,7 +170,9 @@ fun GameLobbyBodyContent(
                             color = Color.White,
                             modifier = Modifier.padding(4.dp)
                         )
+
                     }
+
                     Row {
                         Checkbox(
                             checked = viewModel.ignoreCategories,
@@ -175,7 +195,13 @@ fun GameLobbyBodyContent(
                             modifier = Modifier.padding(top = 17.dp)
                         )
                         Spacer(modifier = Modifier.width(0.dp))
+
                         HelpButton("Si activas esta opción, el juego no tendrá en cuenta las categorías seleccionadas y se jugará con todas las categorías disponibles.")
+
+                    }
+                    if (viewModel.loading){
+                        CircularProgressIndicator(modifier = Modifier.padding(top = 30.dp), color = Color.White)
+
 
                     }
 
@@ -214,6 +240,7 @@ fun GameLobbyBodyContent(
                         Row {
                             TeamField(
                                 onChange = { viewModel.teamName1 = it }, width = 155, "Equipo 1"
+
                             )
                             Spacer(modifier = Modifier.width(50.dp))
                             TeamField(
@@ -314,7 +341,10 @@ fun GameLobbyBodyContent(
                                         viewModel.expanded4 = false
                                         viewModel.selectedCategory4 = categ
                                         TimerSettings.countDownInterval = categ.toLong() * 1000
-                                        Log.i("Timer", circularTimerViewModel.initialTotalTime.toString())
+                                        Log.i(
+                                            "Timer",
+                                            circularTimerViewModel.initialTotalTime.toString()
+                                        )
                                     }) {
                                         Text(text = categ)
                                     }
@@ -336,8 +366,11 @@ fun GameLobbyBodyContent(
 
             2 -> {
                 //region start shop
-                viewModel.updateDlcList()
 
+                viewModel.updateDlcList()
+                if (viewModel.dlcs.isNotEmpty()) {
+                    viewModel.shopLoading = false
+                }
 
                 Column(
                     horizontalAlignment = Alignment.CenterHorizontally,
@@ -347,6 +380,44 @@ fun GameLobbyBodyContent(
                         .padding(bottom = 70.dp)
                 ) {
                     Logo()
+                    if (viewModel.shopLoading){
+                        CircularProgressIndicator(modifier = Modifier.padding(top = 30.dp), color = Color.White)
+
+                    }
+                    if (viewModel.showDialog) {
+                        AlertDialog(
+                            onDismissRequest = { viewModel.showDialog = false },
+                            title = { Text(text = "Confirmar compra") },
+                            text = { Text(text = "¿Estás seguro de que deseas realizar la compra del ${viewModel.dlcAcomprar.keys.first()}?") },
+                            confirmButton = {
+                                Button(
+                                    onClick = {
+                                        // Acción al hacer clic en el botón "Comprar"
+
+                                        viewModel.buyDlc(viewModel.dlcAcomprar) {call->
+                                            Log.i("DLC", call.toString())
+                                        }
+                                        viewModel.showDialog = false
+                                        // Realizar la compra
+                                        // ...
+                                    }, colors = ButtonDefaults.buttonColors(
+                                        backgroundColor = Color(0xFFfae079)
+                                    )
+                                ) {
+                                    Text(text = "Comprar", color = Color.White)
+                                }
+                            },
+                            dismissButton = {
+                                Button(
+                                    onClick = { viewModel.showDialog = false }, colors = ButtonDefaults.buttonColors(
+                                        backgroundColor = Color(0xFFE73760)
+                                    )
+                                ) {
+                                    Text(text = "Cancelar", color = Color.White)
+                                }
+                            }
+                        )
+                    }
                     Spacer(modifier = Modifier.height(36.dp))
                     Row(
                         modifier = Modifier
@@ -366,7 +437,12 @@ fun GameLobbyBodyContent(
                         )
                     }
 
-                    ImageCarousel(dlcs = viewModel.dlcs)
+                    ImageCarousel(dlcs = viewModel.dlcs) {
+                        viewModel.showDialog = true
+                        it?.let {
+                            viewModel.dlcAcomprar = it
+                        }
+                    }
 
 
                     Spacer(modifier = Modifier.height(86.dp))
@@ -387,9 +463,11 @@ fun GameLobbyBodyContent(
             contentAlignment = Alignment.BottomCenter
         ) {
 
-            CustomBottomNavigation(onclick1 = {
-                navController.navigate(AppScreens.GameSettings.route)
-            }, onclick2 = {navController.navigate(AppScreens.LoginScreen.route)})
+            CustomBottomNavigation(
+                onclick1 = {
+                    navController.navigate(AppScreens.GameSettings.route) { navController.popBackStack() }
+                },
+                onclick2 = { navController.navigate(AppScreens.LoginScreen.route) { navController.popBackStack() } })
             Circle(
                 color = MaterialTheme.colors.primary.copy(alpha = 0.5f), animationProgress = 0.5f
             )

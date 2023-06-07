@@ -11,6 +11,7 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.Button
+import androidx.compose.material.ButtonDefaults
 import androidx.compose.material.Card
 import androidx.compose.material.Divider
 import androidx.compose.material.Icon
@@ -34,6 +35,7 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -42,6 +44,7 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
 import com.naim.timer.screens.game.TimerSettings
 import com.naim.timer.screens.game.utils.CircularTimerWithBackground
+import com.naim.timer.ui.theme.Lobster
 import com.naim.timer.ui.theme.Poppins
 import kotlinx.coroutines.launch
 
@@ -235,59 +238,55 @@ fun GameBody(navController: NavController, viewModel: GameViewModel = hiltViewMo
 
                 }
 
-            } else {
+            } else if(viewModel.round in 1..3) {
                 if (viewModel.isFirstLaunch) {
                     viewModel.dataWordsByDB()
                     viewModel.isFirstLaunch = false
                 }
                 viewModel.wordIndex = 0
-                viewModel.finishTimerImmediately()
                 Text(
                     text = "Ronda " + viewModel.round.toString(),
                     fontSize = 74.sp,
                     fontFamily = Poppins,
                     modifier = Modifier.padding(top = 20.dp),
-                    color = Color(0xFFFF70A6)
+                    color = Color(0xFFFAEDAF)
                 )
-                Row(horizontalArrangement = Arrangement.Start, modifier = Modifier.fillMaxWidth().padding(start = 20.dp)) {
+                Spacer(modifier =Modifier.height(20.dp))
+
+                Row(horizontalArrangement = Arrangement.Center, modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(start = 20.dp)) {
+                    Text(text = "Turno de ", fontSize = 34.sp, fontFamily = Poppins, textAlign = TextAlign.Center)
                     if (viewModel.turn) {
                         Text(
                             text = if (TimerSettings.teamName.uppercase()
                                     .isNotBlank()
                             ) TimerSettings.teamName.uppercase() else "Equipo 1",
-                            fontSize = 54.sp,
-                            fontFamily = Poppins
+                            fontSize = 34.sp,
+                            fontFamily = Poppins, textAlign = TextAlign.Center
                         )
                     } else {
                         Text(
                             text = if (TimerSettings.teamName.uppercase()
                                     .isNotBlank()
                             ) TimerSettings.teamName2.uppercase() else "Equipo 2",
-                            fontSize = 54.sp,
-                            fontFamily = Poppins
+                            fontSize = 34.sp,
+                            fontFamily = Poppins, textAlign = TextAlign.Center
                         )
                     }
                 }
 
 
+                Spacer(modifier = Modifier.height(20.dp))
+
+                Row {
 
 
-
-                Row() {
-                    Card(
-                        modifier = Modifier
-                            .padding(top = 10.dp)
-                            .width(350.dp)
-                            .height(200.dp),
-                        elevation = 9.dp,
-                        backgroundColor = Color(0xFF9E1D1D),
-
-
-                        ) {
                         Column(
                             horizontalAlignment = Alignment.Start,
                             verticalArrangement = Arrangement.Center
                         ) {
+
                             Row(modifier = Modifier.padding(start = 20.dp, top = 10.dp)) {
                                 Text(
                                     text = if (TimerSettings.teamName.uppercase()
@@ -336,7 +335,7 @@ fun GameBody(navController: NavController, viewModel: GameViewModel = hiltViewMo
                         }
 
 
-                    }
+
 
 
                 }
@@ -344,11 +343,48 @@ fun GameBody(navController: NavController, viewModel: GameViewModel = hiltViewMo
                 Button(onClick = {
                     viewModel.start = true
 
-                }) {
-                    Text(text = "¡Empezar!")
+                }, colors= ButtonDefaults.buttonColors(
+                    backgroundColor = Color(0xFFE779FA)
+                )) {
+                    Text(
+                        text = "¡Empezar!",
+                        fontFamily = Lobster,
+                        fontSize = 20.sp,
+                        fontWeight = FontWeight.Bold,
+                        color = Color.White,
+                        modifier = Modifier.padding(4.dp)
+                    )
                 }
 
 
+            }else{
+                viewModel.win10Coins()
+
+                if (viewModel.scoreTeam1 > viewModel.scoreTeam2) {
+                    Text(
+                        text = "¡Gana el equipo 1!",
+                        fontSize = 54.sp,
+                        fontFamily = Poppins,
+                        modifier = Modifier.padding(top = 20.dp),
+                        color = Color(0xFFFAEDAF)
+                    )
+                } else if (viewModel.scoreTeam1 < viewModel.scoreTeam2) {
+                    Text(
+                        text = "¡Gana el equipo 2!",
+                        fontSize = 54.sp,
+                        fontFamily = Poppins,
+                        modifier = Modifier.padding(top = 20.dp),
+                        color = Color(0xFFFAEDAF)
+                    )
+                } else {
+                    Text(
+                        text = "¡Empate!",
+                        fontSize = 54.sp,
+                        fontFamily = Poppins,
+                        modifier = Modifier.padding(top = 20.dp),
+                        color = Color(0xFFFAEDAF)
+                    )
+                }
             }
 
         }

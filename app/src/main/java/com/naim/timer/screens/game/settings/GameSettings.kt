@@ -23,6 +23,7 @@ import androidx.compose.material.Card
 import androidx.compose.material.Surface
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -41,9 +42,11 @@ import androidx.compose.ui.util.lerp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
 import com.naim.timer.music.MusicViewModel
+import com.naim.timer.navigation.AppScreens
 import com.naim.timer.ui.theme.Poppins
 import com.naim.timer.ui.theme.Roboto
 import com.naim.timer.ui.theme.RobotoBold
+import kotlinx.coroutines.launch
 import kotlin.math.absoluteValue
 
 @Composable
@@ -52,13 +55,15 @@ fun GameSettings(navController: NavController) {
 }
 
 @OptIn(ExperimentalFoundationApi::class)
-@Preview
+
 @Composable
 fun GameSettingsBodyContent(
-    navController: NavController? = null,
+    navController: NavController,
     viewModel: GameSettingsViewModel = hiltViewModel(),
     viewModelMusic: MusicViewModel = hiltViewModel()
 ) {
+    val pagerState = rememberPagerState()
+    val newScope = rememberCoroutineScope()
     Surface(modifier = Modifier.fillMaxSize(), color = Color.Transparent) {
         Box(
             modifier = Modifier
@@ -80,7 +85,7 @@ fun GameSettingsBodyContent(
                     textAlign = TextAlign.Center
                 )
                 Spacer(modifier = Modifier.height(20.dp))
-                val pagerState = rememberPagerState()
+
                 HorizontalPager(pageCount = 4, state = pagerState) { page ->
                     Card(
                         Modifier
@@ -120,6 +125,8 @@ fun GameSettingsBodyContent(
                                     text = when (pagerState.currentPage) {
                                         0 -> "Equipos"
                                         1 -> "RONDA 1"
+                                        2 -> "RONDA 2"
+                                        3 -> "RONDA 3"
                                         else -> "Hola"
                                     },
                                     fontFamily = RobotoBold,
@@ -140,7 +147,8 @@ fun GameSettingsBodyContent(
                                         )
 
                                     }
-                                    1->{
+
+                                    1 -> {
                                         Text(
                                             text = "Descripción verbal",
                                             fontFamily = Roboto,
@@ -150,9 +158,29 @@ fun GameSettingsBodyContent(
                                             modifier = Modifier.padding(horizontal = 20.dp)
                                         )
                                     }
+
+                                    2 -> {
+                                        Text(
+                                            text = "Si fallas, saltas la palabra",
+                                            fontFamily = Roboto,
+                                            fontSize = 20.sp,
+                                            color = Color.White,
+                                            textAlign = TextAlign.Center,
+                                            modifier = Modifier.padding(horizontal = 20.dp)
+                                        )
+                                    }
+
+                                    3 -> {
+                                        Text(
+                                            text = "Mimica",
+                                            fontFamily = Roboto,
+                                            fontSize = 20.sp,
+                                            color = Color.White,
+                                            textAlign = TextAlign.Center,
+                                            modifier = Modifier.padding(horizontal = 20.dp)
+                                        )
+                                    }
                                 }
-
-
 
 
                             }
@@ -166,7 +194,8 @@ fun GameSettingsBodyContent(
                     text = when (pagerState.currentPage) {
                         0 -> "REGLAS"
                         1 -> "DESCRIPCIÓN VERBAL"
-
+                        2 -> "UNA SOLA PALABRA"
+                        3 -> "MIMICA"
                         else -> "Hola"
                     },
                     fontFamily = RobotoBold,
@@ -180,7 +209,9 @@ fun GameSettingsBodyContent(
                 Text(
                     text = when (pagerState.currentPage) {
                         0 -> "Cada equipo debe tener al menos dos jugadores."
-                        2 -> "El describiente tiene 30 segundos para describir tantas palabras o frases como sea posible, sin usar las palabras clave."
+                        1 -> "El describiente tiene 30 segundos para describir tantas palabras o frases como sea posible, sin usar las palabras clave."
+                        2 -> "El describiente tiene 30 segundos para describir la palabra clave con una sola palabra. en el caso de que fallen, se salta la palabra."
+                        3 -> "El describiente tiene 30 segundos para interpretar la palabra clave con mimica, se podra tararear y hacer sonidos."
                         else -> "Hola"
                     },
                     fontFamily = Roboto,
@@ -235,7 +266,7 @@ fun GameSettingsBodyContent(
                 .padding(start = 22.dp, bottom = 22.dp), verticalAlignment = Alignment.Bottom
         ) {
             Box(
-                modifier = Modifier.clickable { })
+                modifier = Modifier.clickable { navController.navigate(AppScreens.GameLobby.route) { navController.popBackStack() } })
             {
                 Text(
                     text = "INICIO",
@@ -252,7 +283,10 @@ fun GameSettingsBodyContent(
                 .padding(bottom = 22.dp, end = 22.dp), verticalAlignment = Alignment.Bottom
         ) {
             Box(
-                modifier = Modifier.clickable { })
+                modifier = Modifier.clickable {
+
+                    newScope.launch { pagerState.scrollToPage(pagerState.currentPage + 1) }
+                })
             {
                 Text(
                     text = "SIGUIENTE",

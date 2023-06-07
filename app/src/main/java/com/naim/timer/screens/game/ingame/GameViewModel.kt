@@ -10,6 +10,7 @@ import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import androidx.lifecycle.viewmodel.compose.saveable
+import com.naim.timer.model.DBM
 import com.naim.timer.model.DataWords
 import com.naim.timer.screens.game.GameLobbyViewModel
 import com.naim.timer.screens.game.TimerSettings
@@ -118,6 +119,7 @@ class GameViewModel @Inject constructor(
         tempWordList.shuffle()
         start = false
         timeleft = initialTotalTime
+
         startTimer()
     }
 
@@ -127,10 +129,15 @@ class GameViewModel @Inject constructor(
         timeleft = 0
         start = false
         isPlaying.value = true
+        turn = !turn
         Log.i("Tiempo", "Terminado inmediatamente")
     }
 
-
+    fun win10Coins() {
+        viewModelScope.launch {
+            DBM.win10Coins()
+        }
+    }
 }
 
 

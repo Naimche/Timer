@@ -90,10 +90,10 @@ class DBM {
 
 
 
-        fun uploadWordsScript(name: String, words: List<String>, callback: (Int) -> Unit) {
+        fun uploadWordsScript(name: String, words: List<String>, price : Long,callback: (Int) -> Unit) {
             try {
                 val db = FirebaseFirestore.getInstance()
-                val data = DataWords(words, "")
+                val data = DataWords(words, "", price)
                 db.collection("DataWords").document(name).set(data)
                     .addOnSuccessListener {
                         Log.d("DBM", "DocumentSnapshot added")
@@ -121,22 +121,24 @@ class DBM {
             }
         }
 
-        fun getAllDlcs(): Flow<List<DataWords>> = flow {
-            val list = mutableListOf<DataWords>()
+        fun getAllDlcs(): Flow<Map<String,DataWords>> = flow {
+            val map = mutableMapOf<String,DataWords>()
             val db = FirebaseFirestore.getInstance()
-            db.collection("DataWords").get().await().forEach {
+            db.collection("DataWords").get().await().forEach { it ->
                 if (it.id.contains("Dlc")) {
-                    Log.i("DLC", "getAllDlcs: ${it.id}")
-                    Log.i("DLC", "getAllDlcs: $it")
+                   // Log.i("DLC", "getAllDlcs: ${it.id}")
+                    //Log.i("DLC", "getAllDlcs: $it")
                     //Log.i("DLC", "getAllDlcs: ${it.toObject(DataWords::class.java)}")
                     //list.add(it.toObject(DataWords::class.java))
                     val dataWords = DataWords.fromSnapshot(it)
-                    list.add(dataWords)
-                    Log.i("DLC", "getAllDlcs: $it ${list})}")
+                    map[it.id] = dataWords
+                    //Log.i("DLC", "getAllDlcs: $it ${map})}")
+                    Log.i("DLC", "getAllDlcs: ${map["Dlc1"]?.price}")
+                   // Log.i("DLCOINS", "getAllDlcs: ${map["Dlc1"]?.price}")
                 }
 
             }
-            emit(list)
+            emit(map)
         }
 
         fun getAllCategoriesWthAccess():Flow<Map<String,DataWords>> = flow{
@@ -171,8 +173,56 @@ class DBM {
             awaitClose { channel.close() }
         }
 
+        suspend fun win10Coins(){
+            val db = FirebaseFirestore.getInstance()
+            val user = FirebaseAuth.getInstance().currentUser?.uid
+            if (user != null) {
+                getUserData(user).collect { users ->
+                    users.coins?.let {
+                        val price = it + 10
+                        db.collection("User").document(user).update("coins", price)
+                    }
+                }
+            }
+        }
+
+        suspend fun buyDlc(idDlc: Map<String,Long>, callback: (Int) -> Unit) {
+            val db = FirebaseFirestore.getInstance()
+            val user = FirebaseAuth.getInstance().currentUser?.uid
+            if (user != null) {
+                getUserData(user).collect { users ->
+
+                    if (users.dataWordsKey?.contains(idDlc.keys.first()) == true) {
+                        callback(1)//Ya tiene la dlc
+                        return@collect
+                    }else{
+                        Log.i("COINS", "buyDlc: ${users.coins} ${idDlc.values.first()}")
+                        if (users.coins >= idDlc.values.first()) {
+                            users.coins?.let {
+                                val price = it - idDlc.values.first()
+                                db.collection("User").document(user).update("coins", price)
+                                users.dataWordsKey?.let {
+                                    val list = it.toMutableList()
+                                    list.add(idDlc.keys.first())
+                                    db.collection("User").document(user).update("dataWordsKey", list)
+                                }
+                                callback(0)//Compra exitosa
+                            }
+
+                            return@collect
+                        }else{
+                            callback(2) //No tiene suficientes monedas
+                            return@collect
+                        }
+                    }
 
 
+
+                }
+
+
+            }
+        }
 
     }
 }

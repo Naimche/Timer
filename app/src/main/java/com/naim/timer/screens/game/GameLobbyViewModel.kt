@@ -7,6 +7,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import androidx.lifecycle.viewmodel.compose.SavedStateHandleSaveableApi
 import androidx.lifecycle.viewmodel.compose.saveable
+import androidx.lifecycle.viewmodel.compose.viewModel
 import com.naim.timer.model.DBM
 import com.naim.timer.model.DataWords
 import com.naim.timer.screens.game.ingame.GameViewModel
@@ -19,7 +20,7 @@ class GameLobbyViewModel @Inject constructor(savedStateHandle: SavedStateHandle)
     ViewModel() {
     var isMenuExtended by savedStateHandle.saveable { mutableStateOf(false) }
     var whIsMenu by savedStateHandle.saveable { mutableStateOf(0) }
-    var dlcs by savedStateHandle.saveable { mutableStateOf(emptyList<DataWords>()) }
+    var dlcs by savedStateHandle.saveable { mutableStateOf(emptyMap<String,DataWords>()) }
     var expanded by savedStateHandle.saveable{ mutableStateOf(false) }
     var expanded2 by savedStateHandle.saveable{ mutableStateOf(false) }
     var expanded3 by savedStateHandle.saveable{ mutableStateOf(false) }
@@ -39,15 +40,22 @@ class GameLobbyViewModel @Inject constructor(savedStateHandle: SavedStateHandle)
 
     var ignoreCategories by savedStateHandle.saveable{mutableStateOf(false)}
 
+    var showDialog by savedStateHandle.saveable{mutableStateOf(false)}
+
+    var dlcAcomprar by savedStateHandle.saveable{mutableStateOf(emptyMap<String,Long>())}
+    var loading by savedStateHandle.saveable{mutableStateOf(true)}
+    var shopLoading by savedStateHandle.saveable{mutableStateOf(true)}
     fun updateDlcList() {
         viewModelScope.launch {
             DBM.getAllDlcs().collect() {
                 dlcs = it
+                Log.i("DLC", "updateDlcList: $it")
             }
         }
     }
 
     fun updateCategories(){
+
         val list = mutableListOf<String>()
         val allDatawords = mutableMapOf<String,DataWords>()
         viewModelScope.launch {
@@ -65,6 +73,13 @@ class GameLobbyViewModel @Inject constructor(savedStateHandle: SavedStateHandle)
         }
     }
 
+    fun buyDlc(idDlc: Map<String, Long>, callback: (Int) -> Unit) {
+        viewModelScope.launch {
+            DBM.buyDlc(idDlc){
+                callback(it)
+            }
+        }
+    }
 
 
 

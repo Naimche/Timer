@@ -1,5 +1,6 @@
 package com.naim.timer.screens.game.utils
 
+import android.util.Log
 import android.widget.Toast
 import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.Image
@@ -9,6 +10,7 @@ import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.progressSemantics
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.*
@@ -17,6 +19,8 @@ import androidx.compose.material.icons.filled.Help
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.StrokeCap
 import androidx.compose.ui.graphics.drawscope.DrawScope
@@ -33,6 +37,7 @@ import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.DpOffset
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.compose.ui.window.Dialog
 import androidx.compose.ui.window.PopupProperties
 import coil.compose.rememberAsyncImagePainter
 import com.naim.timer.model.DataWords
@@ -40,7 +45,7 @@ import com.naim.timer.ui.theme.Lobster
 
 @OptIn(ExperimentalMaterialApi::class)
 @Composable
-fun ImageCarousel(dlcs: List<DataWords>) {
+fun ImageCarousel(dlcs: Map<String,DataWords>, onDlcClick: (Map<String,Long>) -> Unit) {
 
     val listState = rememberLazyListState()
 
@@ -54,23 +59,32 @@ fun ImageCarousel(dlcs: List<DataWords>) {
         contentPadding = PaddingValues(horizontal = 16.dp, vertical = 6.dp),
         content = {
             items(dlcs.size) { index ->
-                val imagen = dlcs[index]
+                val imagen = dlcs[dlcs.keys.elementAt(index)]
+                val dlc = dlcs.keys.elementAt(index)
+                Log.i("COINS", "ImageCarousel: ${dlcs.keys.elementAt(index)} ${dlcs[dlcs.keys.elementAt(index)]?.price}")
+
                 Card(
                     modifier = Modifier.padding(16.dp),
-                    onClick = ({ /* Lógica para abrir ventana de compra */ }),
+                    onClick = {
+                        if (imagen != null) {
+                            onDlcClick(mapOf(dlc to imagen.price))
+                        }
+                    },
                     enabled = true
                 ) {
                     Column(
                         modifier = Modifier.size(238.dp),
                     ) {
-                        Image(
-                            painter = rememberAsyncImagePainter(imagen.urlImg),
-                            contentDescription = "",
-                            contentScale = ContentScale.Crop,
-                            modifier = Modifier
-                                .fillMaxWidth()
+                        if (imagen != null) {
+                            Image(
+                                painter = rememberAsyncImagePainter(imagen.urlImg),
+                                contentDescription = "",
+                                contentScale = ContentScale.Crop,
+                                modifier = Modifier
+                                    .fillMaxWidth()
 
-                        )
+                            )
+                        }
                     }
                 }
             }
@@ -105,9 +119,11 @@ fun TeamField(onChange: (String) -> Unit, width: Int, txtHolder: String) {
             autoCorrect = false,
             capitalization = KeyboardCapitalization.Words
         ), onValueChange = {
-            name = it
-            onChange(it)
-        },
+            if (it.length <= 7) {
+                name = it
+                onChange(it)
+            }
+        }, singleLine = true, maxLines = 5,
         label = { Text(text = txtHolder, color = Color.White) },
         colors = TextFieldDefaults.textFieldColors(
             backgroundColor = Color(0xFFe2c0b6),
@@ -266,3 +282,52 @@ fun HelpButton(text: String) {
     }
 }
 
+@Composable
+fun CustomAlertDialog(
+    showDialog: Boolean,
+    onDismissRequest: () -> Unit,
+    confirmButton: @Composable () -> Unit,
+    dismissButton: @Composable () -> Unit,
+    title: @Composable () -> Unit,
+    text: @Composable () -> Unit
+) {
+    if (showDialog) {
+        Dialog(
+            onDismissRequest = onDismissRequest
+        ) {
+            Box(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .background(
+                        brush = Brush.verticalGradient(
+                            colors = listOf(
+                                Color(0xFF001d3d),
+                                Color(0xFF0081a7),
+                                Color(0xFF00afb9),
+                                Color(0xFF90e0ef),
+                                Color(0xFFcaf0f8)
+                            )
+                        )
+                    ),
+                contentAlignment = Alignment.Center
+            ) {
+                Column(
+                    modifier = Modifier.padding(16.dp)
+                ) {
+                    title()
+                    Spacer(modifier = Modifier.height(16.dp))
+                    text()
+                    Spacer(modifier = Modifier.height(24.dp))
+                    Row(
+                        modifier = Modifier.fillMaxWidth(),
+                        horizontalArrangement = Arrangement.End
+                    ) {
+                        dismissButton()
+                        Spacer(modifier = Modifier.width(8.dp))
+                        confirmButton()
+                    }
+                }
+            }
+        }
+    }
+}
