@@ -1,7 +1,6 @@
 package com.naim.timer.screens.game.utils
 
-import androidx.compose.animation.core.FastOutSlowInEasing
-import androidx.compose.animation.core.TweenSpec
+
 import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
@@ -10,7 +9,6 @@ import androidx.compose.foundation.progressSemantics
 import androidx.compose.material.Icon
 import androidx.compose.material.IconButton
 import androidx.compose.material.MaterialTheme
-import androidx.compose.material.OutlinedTextField
 import androidx.compose.material.ProgressIndicatorDefaults
 import androidx.compose.material.Surface
 import androidx.compose.material.Text
@@ -146,7 +144,7 @@ fun CircularTimerWithBackground(
             color = foreGroundColor,
             modifier = Modifier.fillMaxSize(),
 
-        )
+            )
         RoundedCircularProgressIndicator(
             progress = 1f,
             strokeWidth = strokeWidth,
@@ -172,9 +170,9 @@ private suspend fun animateValue(targetValue: Float, animatedValue: MutableState
 @Preview
 @Composable
 private fun ScreenContentPreview() {
-    TimerTheme() {
+    TimerTheme {
         Surface {
-            CircularTimerWithBackground(progress = 0.5f,)
+            CircularTimerWithBackground(progress = 0.5f)
         }
 
     }

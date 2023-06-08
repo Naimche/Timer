@@ -8,6 +8,5 @@ import javax.inject.Inject
 
 class GameSettingsViewModel @Inject constructor(savedStateHandle: SavedStateHandle) :
     ViewModel() {
-        var page by savedStateHandle
-            .saveable { mutableStateOf(0) }
+
 }

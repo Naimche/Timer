@@ -126,6 +126,7 @@ fun FabGroup(
         )
     }
 }
+
 @Composable
 fun Circle(color: Color, animationProgress: Float) {
     val animationValue = sin(PI * animationProgress).toFloat()
@@ -142,6 +143,7 @@ fun Circle(color: Color, animationProgress: Float) {
             )
     )
 }
+
 @RequiresApi(Build.VERSION_CODES.S)
 fun getRenderEffect(): RenderEffect {
     val blurEffect = RenderEffect

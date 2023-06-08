@@ -3,6 +3,7 @@ package com.naim.timer.screens.game
 import android.annotation.SuppressLint
 import android.os.Build
 import android.util.Log
+import android.widget.Toast
 import androidx.compose.animation.core.LinearEasing
 import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.animation.core.tween
@@ -16,9 +17,9 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.asComposeRenderEffect
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
@@ -31,7 +32,6 @@ import androidx.navigation.compose.rememberNavController
 import com.naim.timer.music.MusicViewModel
 import com.naim.timer.navigation.AppScreens
 import com.naim.timer.screens.game.ingame.GameViewModel
-import com.naim.timer.screens.game.utils.CustomAlertDialog
 import com.naim.timer.screens.game.utils.ExposedDropMenuTimer
 import com.naim.timer.screens.game.utils.HelpButton
 import com.naim.timer.screens.game.utils.ImageCarousel
@@ -49,7 +49,6 @@ fun GameLobby(navController: NavController) {
 @Composable
 fun GameLobbyBodyContent(
     navController: NavController,
-    musicViewModel: MusicViewModel = hiltViewModel(),
     viewModel: GameLobbyViewModel = hiltViewModel()
 ) {
 
@@ -100,6 +99,37 @@ fun GameLobbyBodyContent(
 
     ) {
     Surface(modifier = Modifier.fillMaxSize()) {
+        if (viewModel.showDialogLougout) {
+            AlertDialog(
+                onDismissRequest = { /* Acciones a realizar cuando se solicita cerrar el diálogo */ },
+                title = { Text("Cerrar sesión") },
+                text = { Text("¿Estás seguro de que deseas cerrar sesión?") },
+                confirmButton = {
+                    TextButton(
+                        onClick = {
+                            viewModel.logout()
+                            navController.navigate(AppScreens.LoginScreen.route) {
+                                navController.popBackStack()
+                            }
+                            // Acciones a realizar si el cliente selecciona "Sí"
+                            viewModel.showDialogLougout = false
+                        }
+                    ) {
+                        Text("Sí")
+                    }
+                },
+                dismissButton = {
+                    TextButton(
+                        onClick = {
+                            // Acciones a realizar si el cliente selecciona "No" o cierra el diálogo
+                            viewModel.showDialogLougout = false
+                        }
+                    ) {
+                        Text("No")
+                    }
+                }
+            )
+        }
         if (viewModel.categories.isNotEmpty()) viewModel.loading = false
 
         viewModel.updateCategories()
@@ -109,11 +139,14 @@ fun GameLobbyBodyContent(
         when (viewModel.whIsMenu) {
 
             0 -> {
-                if (viewModel.loading){
+                if (viewModel.loading) {
                     Box(Modifier.fillMaxSize()) {
                         AlertDialog(
                             onDismissRequest = { },
-                            properties = DialogProperties(dismissOnBackPress = false, dismissOnClickOutside = false),
+                            properties = DialogProperties(
+                                dismissOnBackPress = false,
+                                dismissOnClickOutside = false
+                            ),
                             backgroundColor = Color.Transparent,
                             buttons = {},
                             modifier = Modifier
@@ -156,7 +189,11 @@ fun GameLobbyBodyContent(
                         )
                     }
                     Button(
-                        onClick = { navController.navigate("Game") },
+                        onClick = {
+                            navController.navigate(AppScreens.Game.route) {
+                                navController.popBackStack()
+                            }
+                        },
                         modifier = Modifier
                             .padding(horizontal = 24.dp, vertical = 16.dp)
                             .clip(RoundedCornerShape(16.dp)),
@@ -199,8 +236,11 @@ fun GameLobbyBodyContent(
                         HelpButton("Si activas esta opción, el juego no tendrá en cuenta las categorías seleccionadas y se jugará con todas las categorías disponibles.")
 
                     }
-                    if (viewModel.loading){
-                        CircularProgressIndicator(modifier = Modifier.padding(top = 30.dp), color = Color.White)
+                    if (viewModel.loading) {
+                        CircularProgressIndicator(
+                            modifier = Modifier.padding(top = 30.dp),
+                            color = Color.White
+                        )
 
 
                     }
@@ -232,7 +272,7 @@ fun GameLobbyBodyContent(
                         horizontalAlignment = Alignment.Start,
                         modifier = Modifier.padding(start = 16.dp)
                     ) {
-                        Row() {
+                        Row {
                             Titulo(texto = "Equipo 1")
                             Spacer(modifier = Modifier.width(110.dp))
                             Titulo(texto = "Equipo 2")
@@ -371,6 +411,8 @@ fun GameLobbyBodyContent(
                 if (viewModel.dlcs.isNotEmpty()) {
                     viewModel.shopLoading = false
                 }
+                val context = LocalContext.current
+
 
                 Column(
                     horizontalAlignment = Alignment.CenterHorizontally,
@@ -380,21 +422,44 @@ fun GameLobbyBodyContent(
                         .padding(bottom = 70.dp)
                 ) {
                     Logo()
-                    if (viewModel.shopLoading){
-                        CircularProgressIndicator(modifier = Modifier.padding(top = 30.dp), color = Color.White)
 
-                    }
                     if (viewModel.showDialog) {
+                        viewModel.getCoins()
                         AlertDialog(
                             onDismissRequest = { viewModel.showDialog = false },
                             title = { Text(text = "Confirmar compra") },
-                            text = { Text(text = "¿Estás seguro de que deseas realizar la compra del ${viewModel.dlcAcomprar.keys.first()}?") },
+                            text = {
+                                Text(
+                                    text = "¿Estás seguro de que deseas realizar la compra del ${viewModel.dlcAcomprar.keys.first()} por un precio de ${viewModel.dlcAcomprar.values.first()} Timer Coins?\n\n" +
+                                            "Coins Disponibles: ${viewModel.coins}"
+                                )
+                            },
                             confirmButton = {
                                 Button(
                                     onClick = {
                                         // Acción al hacer clic en el botón "Comprar"
 
-                                        viewModel.buyDlc(viewModel.dlcAcomprar) {call->
+                                        viewModel.buyDlc(viewModel.dlcAcomprar) { call ->
+                                            //Toast de callback
+                                            when (call) {
+                                                0 -> Toast.makeText(
+                                                    context,
+                                                    "Compra realizada con éxito",
+                                                    Toast.LENGTH_SHORT
+                                                ).show()
+
+                                                1 -> Toast.makeText(
+                                                    context,
+                                                    "Sin cobro adicional, el DLC ya se encontraba previamente en tu cuenta.",
+                                                    Toast.LENGTH_SHORT
+                                                ).show()
+
+                                                2 -> Toast.makeText(
+                                                    context,
+                                                    "No tienes suficientes Timer Coins",
+                                                    Toast.LENGTH_SHORT
+                                                ).show()
+                                            }
                                             Log.i("DLC", call.toString())
                                         }
                                         viewModel.showDialog = false
@@ -409,7 +474,8 @@ fun GameLobbyBodyContent(
                             },
                             dismissButton = {
                                 Button(
-                                    onClick = { viewModel.showDialog = false }, colors = ButtonDefaults.buttonColors(
+                                    onClick = { viewModel.showDialog = false },
+                                    colors = ButtonDefaults.buttonColors(
                                         backgroundColor = Color(0xFFE73760)
                                     )
                                 ) {
@@ -436,10 +502,17 @@ fun GameLobbyBodyContent(
                             modifier = Modifier.padding(12.dp)
                         )
                     }
+                    if (viewModel.shopLoading) {
+                        CircularProgressIndicator(
+                            modifier = Modifier.padding(top = 30.dp),
+                            color = Color.White
+                        )
+
+                    }
 
                     ImageCarousel(dlcs = viewModel.dlcs) {
                         viewModel.showDialog = true
-                        it?.let {
+                        it.let {
                             viewModel.dlcAcomprar = it
                         }
                     }
@@ -467,7 +540,10 @@ fun GameLobbyBodyContent(
                 onclick1 = {
                     navController.navigate(AppScreens.GameSettings.route) { navController.popBackStack() }
                 },
-                onclick2 = { navController.navigate(AppScreens.LoginScreen.route) { navController.popBackStack() } })
+                onclick2 = {
+
+                    viewModel.showDialogLougout = true
+                })
             Circle(
                 color = MaterialTheme.colors.primary.copy(alpha = 0.5f), animationProgress = 0.5f
             )

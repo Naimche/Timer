@@ -59,6 +59,19 @@ class DBM {
                 callback(9)
             }
         }
+        fun getCoins(callback: (Long) -> Unit) {
+            try {
+                val mAuth = FirebaseAuth.getInstance()
+                val db = FirebaseFirestore.getInstance()
+                db.collection("User").document(mAuth.currentUser!!.uid).get()
+                    .addOnSuccessListener {
+                        val coins = it["coins"] as? Long ?: 0
+                        callback(coins)
+                    }
+            } catch (e: Exception) {
+                callback(0)
+            }
+        }
 
         fun onRegister(email: String, password: String, nick: String, callback: (Int) -> Unit) {
             try {
@@ -178,7 +191,7 @@ class DBM {
             val user = FirebaseAuth.getInstance().currentUser?.uid
             if (user != null) {
                 getUserData(user).collect { users ->
-                    users.coins?.let {
+                    users.coins.let {
                         val price = it + 10
                         db.collection("User").document(user).update("coins", price)
                     }
@@ -198,7 +211,7 @@ class DBM {
                     }else{
                         Log.i("COINS", "buyDlc: ${users.coins} ${idDlc.values.first()}")
                         if (users.coins >= idDlc.values.first()) {
-                            users.coins?.let {
+                            users.coins.let {
                                 val price = it - idDlc.values.first()
                                 db.collection("User").document(user).update("coins", price)
                                 users.dataWordsKey?.let {
@@ -222,6 +235,10 @@ class DBM {
 
 
             }
+        }
+
+        fun logout() {
+            FirebaseAuth.getInstance().signOut()
         }
 
     }

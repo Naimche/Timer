@@ -2,50 +2,39 @@ package com.naim.timer.screens.game.utils
 
 import android.util.Log
 import android.widget.Toast
-import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.focusable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.rememberLazyListState
-import androidx.compose.foundation.progressSemantics
-import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardOptions
-import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.*
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Help
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.StrokeCap
-import androidx.compose.ui.graphics.drawscope.DrawScope
-import androidx.compose.ui.graphics.drawscope.Stroke
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardCapitalization
 import androidx.compose.ui.text.input.KeyboardType
-import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.DpOffset
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.window.Dialog
-import androidx.compose.ui.window.PopupProperties
 import coil.compose.rememberAsyncImagePainter
 import com.naim.timer.model.DataWords
 import com.naim.timer.ui.theme.Lobster
 
 @OptIn(ExperimentalMaterialApi::class)
 @Composable
-fun ImageCarousel(dlcs: Map<String,DataWords>, onDlcClick: (Map<String,Long>) -> Unit) {
+fun ImageCarousel(dlcs: Map<String, DataWords>, onDlcClick: (Map<String, Long>) -> Unit) {
 
     val listState = rememberLazyListState()
 
@@ -61,7 +50,10 @@ fun ImageCarousel(dlcs: Map<String,DataWords>, onDlcClick: (Map<String,Long>) ->
             items(dlcs.size) { index ->
                 val imagen = dlcs[dlcs.keys.elementAt(index)]
                 val dlc = dlcs.keys.elementAt(index)
-                Log.i("COINS", "ImageCarousel: ${dlcs.keys.elementAt(index)} ${dlcs[dlcs.keys.elementAt(index)]?.price}")
+                Log.i(
+                    "COINS",
+                    "ImageCarousel: ${dlcs.keys.elementAt(index)} ${dlcs[dlcs.keys.elementAt(index)]?.price}"
+                )
 
                 Card(
                     modifier = Modifier.padding(16.dp),
@@ -238,7 +230,7 @@ fun CountdownButton(
     selectedCategory: String,
 ) {
 
-    Column() {
+    Column {
         ExposedDropMenuTimer(
             expanded = expanded,
             onExpandedChange = onExpandedChange,

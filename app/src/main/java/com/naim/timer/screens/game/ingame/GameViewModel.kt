@@ -2,22 +2,17 @@ package com.naim.timer.screens.game.ingame
 
 import android.os.CountDownTimer
 import android.util.Log
-import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import androidx.lifecycle.viewmodel.compose.saveable
 import com.naim.timer.model.DBM
-import com.naim.timer.model.DataWords
 import com.naim.timer.screens.game.GameLobbyViewModel
 import com.naim.timer.screens.game.TimerSettings
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.launch
 import javax.inject.Inject
-import javax.inject.Singleton
 
 
 @HiltViewModel
@@ -79,7 +74,7 @@ class GameViewModel @Inject constructor(
             TimerSettings.ignoreCategory = true
         }
 
-        if (TimerSettings.ignoreCategory ) {
+        if (TimerSettings.ignoreCategory) {
             TimerSettings.allCategory.values.forEach { dataWords ->
                 dataWords.words.forEach {
                     if (!list.contains(it)) {
@@ -131,6 +126,7 @@ class GameViewModel @Inject constructor(
         isPlaying.value = true
         turn = !turn
         Log.i("Tiempo", "Terminado inmediatamente")
+
     }
 
     fun win10Coins() {

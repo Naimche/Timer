@@ -2,6 +2,7 @@ package com.naim.timer
 
 import android.content.pm.ActivityInfo
 import android.os.Bundle
+import android.view.WindowManager
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.compose.foundation.layout.fillMaxSize
@@ -20,7 +21,7 @@ class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContent {
-
+            window.addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON)
             requestedOrientation = ActivityInfo.SCREEN_ORIENTATION_PORTRAIT
             StartApp()
         }
@@ -37,8 +38,7 @@ fun StartApp() {
 
         ) {
             val user = FirebaseAuth.getInstance().currentUser
-            var startDestination = ""
-            startDestination= if (user != null) {
+            val startDestination= if (user != null) {
                 AppScreens.GameLobby.route
             } else {
                 AppScreens.LoginScreen.route
@@ -49,7 +49,7 @@ fun StartApp() {
     }
 
     //region start Scriptzone
-    //DBM.uploadWordsScript("Dlc1", listOf("Campana", "Sirena", "Alarma", "Viento", "Rayo", "Trueno", "Llanto", "Gruñido", "Maullido", "Ladrido", "Aullido", "Chirrido", "Rugido", "Silbido", "Tocino", "Huevo", "Helado", "Pizza", "Pastel", "Burrito", "Popcorn", "Coca Cola", "Leche", "Té", "Café", "Cerveza", "Vino", "Whisky", "Garganta", "Estornudo", "Ronquido", "Carcajada", "Bostezo", "Suspiro", "Lloriqueo", "Hipo", "Tos", "Golpe", "Caída", "Explosión", "Disparo", "Chirriar", "Zumbido", "Silencio", "Canto", "Aplausos", "Tararear", "Zapping", "Teléfono", "Timbre", "Ruido de la calle", "Portazo", "Silla", "Pasos", "Ducha", "Lavadora", "Secadora", "Cepillarse los dientes", "Cortar el césped", "Perforadora", "Licuadora", "Tocadiscos", "Piano", "Guitarra", "Batería", "Violín", "Flauta", "Saxofón", "Trompeta", "Helicóptero", "Avión", "Tren", "Coche", "Moto", "Bicicleta", "Barco", "Submarino", "Sátelite", "Ventilador", "Ascensor", "Puerta automática", "Abanico", "Grifo", "Almohada", "Silla de playa", "Tumbona", "Cama", "Saco de dormir", "Tienda de campaña", "Chimenea", "Cascada", "Río", "Mar", "Piscina", "Lluvia", "Nieve", "Tormenta", "Fuego artificial", "Carrusel", "Parque de atracciones")){
+    //DBM.uploadWordsScript("Dlc2", price = 120L, words =  listOf("Mario", "Luigi", "Link", "Princesa Peach", "Donkey Kong", "Samus Aran", "Yoshi", "Kirby", "Pikachu", "Charizard", "Sonic the Hedgehog", "Mega Man", "Solid Snake", "Cloud Strife", "Master Chief", "Kratos", "Lara Croft", "Nathan Drake", "Geralt of Rivia", "Arthur Morgan", "Ezio Auditore", "Commander Shepard", "Marcus Fenix", "Gordon Freeman", "Leon S. Kennedy", "Jill Valentine", "Mario", "Bowser", "Ganondorf", "Fox McCloud", "Captain Falcon", "Peach", "Zelda", "Link", "Sheik", "Ganondorf", "Donkey Kong", "Diddy Kong", "Samus Aran", "Kirby", "Meta Knight", "King Dedede", "Pikachu", "Jigglypuff", "Charizard", "Mewtwo", "Lucario", "Incineroar", "Sonic", "Tails", "Knuckles", "Dr. Robotnik", "Mega Man", "X", "Zero", "Dante", "Leonardo (TMNT)", "Cortana", "Crash Bandicoot", "Spyro", "Rayman", "Ezio Auditore", "Altair", "Connor Kenway", "Edward Kenway", "Lara Croft", "Nathan Drake", "Joel (The Last of Us)", "Ellie (The Last of Us)", "Geralt of Rivia", "Ciri", "Arthur Morgan", "John Marston", "Trevor Phillips", "CJ (GTA San Andreas)", "Niko Bellic", "Tommy Vercetti", "Arthur Morgan", "John Marston", "Kratos", "Aloy", "Atreus", "Ratchet", "Clank", "Jak", "Daxter", "Sly Cooper", "Bentley", "Corvo Attano", "Emily Kaldwin", "Doom Slayer", "Sam Fisher", "Agent 47", "Joel (The Last of Us)", "Ellie (The Last of Us)", "Max Payne", "Marcus Fenix", "Alex Mercer", "Ezio Auditore", "Commander Shepard")){
 
     //}
 
