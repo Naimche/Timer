@@ -23,7 +23,7 @@ class DBM {
         fun onLogin(email: String, password: String, callback: (Int) -> Unit) {
             try {
                 if (email.isNotBlank() && password.isNotBlank()) {
-                    FirebaseAuth.getInstance().signInWithEmailAndPassword(email, password)
+                    FirebaseAuth.getInstance().signInWithEmailAndPassword(email.trim(), password.trim())
                         .addOnCompleteListener {
                             if (it.isSuccessful) {
                                 callback(0)
@@ -77,7 +77,7 @@ class DBM {
             try {
                 if (email.isNotBlank() && password.isNotBlank()) {
                     val mAuth = FirebaseAuth.getInstance()
-                    mAuth.createUserWithEmailAndPassword(email, password)
+                    mAuth.createUserWithEmailAndPassword(email.trim(), password.trim())
                         .addOnCompleteListener {
                             val fireStore = FirebaseFirestore.getInstance()
                             if (it.isSuccessful) {
