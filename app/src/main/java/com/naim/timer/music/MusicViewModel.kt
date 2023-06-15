@@ -43,7 +43,7 @@ class MusicViewModel @Inject constructor(
 
     fun playMusic(context: Context) {
         if (!isPlaying) {
-            mediaPlayer = MediaPlayer.create(context, R.raw.background_music)
+           // mediaPlayer = MediaPlayer.create(context, R.raw.background_music)
             mediaPlayer?.isLooping = true
             mediaPlayer?.start()
             isPlaying = true

@@ -92,7 +92,7 @@ fun GameBody(navController: NavController, viewModel: GameViewModel = hiltViewMo
 
 
                 Text(
-                    text = TimerSettings.teamName,
+                    text = if (viewModel.turn) TimerSettings.teamName else TimerSettings.teamName2,
                     fontFamily = Poppins,
                     fontSize = 64.sp,
                     modifier = Modifier.padding(bottom = 0.dp),
