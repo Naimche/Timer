@@ -1,13 +1,13 @@
 # Timer!
-![Captura de Pantalla 1](/ruta/a/la/imagen1.png)
+![https://github.com/Naimche/Timer/blob/master/app/src/main/res/drawable/icon.png](/ruta/a/la/imagen1.png)
 ## Descripción
 La aplicación Timer es una herramienta de entretenimiento que combina diversión y desafío para los usuarios. El objetivo principal del juego es adivinar palabras o frases dentro de un límite de tiempo utilizando diferentes técnicas, como descripciones, mímicas y una sola palabra.
 ## Capturas de Pantalla
 
 Descripción de la captura de pantalla.
 
-![Captura de Pantalla 2](/ruta/a/la/imagen2.png)
-Descripción de la captura de pantalla.
+![https://github.com/Naimche/Timer/blob/master/app/src/main/res/drawable/lobby.jpg](/ruta/a/la/imagen2.png)
+Lobby Timer!.
 ## Características
 - Temporizador personalizable: Los usuarios pueden ajustar la duración del temporizador según sus preferencias, lo que les brinda control sobre la intensidad y ritmo del juego.
 - Tienda de DLCs: La aplicación cuenta con una tienda donde los usuarios pueden adquirir DLCs (contenido descargable) para ampliar el repertorio de palabras y frases del juego.
