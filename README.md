@@ -17,7 +17,7 @@ Lobby.
 - Integración de Firebase: La aplicación utiliza Firebase como base de datos y para la autenticación de usuarios, lo que garantiza la seguridad de la información y la escalabilidad del sistema.
 
 ## Instalación
-1. Descarga el archivo APK de la aplicación desde el siguiente enlace: [https://github.com/Naimche/Timer/raw/master/timer.apk](enlace-del-apk).
+1. Descarga el archivo APK de la aplicación desde el siguiente enlace: [Timer!](https://github.com/Naimche/Timer/raw/master/timer.apk).
 2. Habilita la instalación de aplicaciones de origen desconocido en la configuración de tu dispositivo.
 3. Transfiere el archivo APK a tu dispositivo.
 4. Abre el archivo APK en tu dispositivo y sigue las instrucciones de instalación.
