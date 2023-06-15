@@ -7,7 +7,7 @@ La aplicación Timer es una herramienta de entretenimiento que combina diversió
 Descripción de la captura de pantalla.
 
 ![Captura de Pantalla 2](app/src/main/res/drawable/lobby.jpg)
-Descripción de la captura de pantalla.
+Lobby.
 ## Características
 - Temporizador personalizable: Los usuarios pueden ajustar la duración del temporizador según sus preferencias, lo que les brinda control sobre la intensidad y ritmo del juego.
 - Tienda de DLCs: La aplicación cuenta con una tienda donde los usuarios pueden adquirir DLCs (contenido descargable) para ampliar el repertorio de palabras y frases del juego.
